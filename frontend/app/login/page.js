@@ -190,14 +190,7 @@ export default function LoginPage() {
                             </GradientButton>
                         </form>
 
-                        {/* Demo Credentials */}
-                        <div className="mt-8 p-4 bg-[var(--bg-tertiary)] rounded-xl border border-[var(--border-primary)]">
-                            <p className="text-sm text-[var(--text-secondary)] text-center mb-2">Demo Credentials</p>
-                            <div className="text-sm text-[var(--text-tertiary)] text-center space-y-1">
-                                <p><span className="text-[var(--text-secondary)]">Email:</span> admin@example.com</p>
-                                <p><span className="text-[var(--text-secondary)]">Password:</span> admin123</p>
-                            </div>
-                        </div>
+
                     </div>
 
                     {/* Footer */}

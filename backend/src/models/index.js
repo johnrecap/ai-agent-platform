@@ -74,10 +74,10 @@ const seedDefaultAdmin = async () => {
             await User.create({
                 name: config.defaultAdmin.name,
                 email: config.defaultAdmin.email,
-                password: 'admin123', // Will be hashed by the beforeCreate hook
+                password: config.defaultAdmin.password,
                 role: config.defaultAdmin.role
             });
-            console.log('✅ Default admin user created (admin@example.com / admin123)');
+            console.log(`✅ Default admin user created (${config.defaultAdmin.email})`);
         } else {
             console.log('ℹ️  Admin user already exists');
         }

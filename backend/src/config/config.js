@@ -38,9 +38,8 @@ const config = {
     // Default admin credentials
     defaultAdmin: {
         name: 'Admin',
-        email: 'admin@example.com',
-        // Pre-hashed password for 'admin123'
-        password: '$2b$10$rBV2kYEFwXm3qx5c9p8qNO8VGlxK6PJ9QnH0r0fQ8aZ7xH3mK5vXS',
+        email: 'mohamedsaied.20m@gmail.com',
+        password: 'Mm10203040@', // Will be hashed by User model
         role: 'admin'
     }
 };
