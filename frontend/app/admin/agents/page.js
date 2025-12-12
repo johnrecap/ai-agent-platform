@@ -10,6 +10,7 @@ import api from '@/lib/api';
 import { useLanguage } from '@/lib/language';
 import toast from 'react-hot-toast';
 import { GlassCard, GradientButton, Skeleton, EmptyState, StatusBadge, IconButton } from '@/components/ui';
+import EmbedCodeGenerator from '@/components/EmbedCodeGenerator';
 
 export default function AgentsPage() {
     const { t, isRTL, language } = useLanguage();
@@ -17,6 +18,7 @@ export default function AgentsPage() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingAgent, setEditingAgent] = useState(null);
+    const [embedAgent, setEmbedAgent] = useState(null); // Agent for embed modal
     const [formData, setFormData] = useState({ agent_name: '', page_title: '', dify_api_key: '', iframe_code: '' });
     const [saving, setSaving] = useState(false);
 
@@ -44,7 +46,9 @@ export default function AgentsPage() {
         agentCreated: language === 'ar' ? 'تم إنشاء الوكيل!' : 'Agent created!',
         agentDeleted: language === 'ar' ? 'تم حذف الوكيل' : 'Agent deleted',
         failed: language === 'ar' ? 'فشل' : 'Failed',
+        failed: language === 'ar' ? 'فشل' : 'Failed',
         hasApiKey: language === 'ar' ? '🔑 مفتاح API' : '🔑 API Key',
+        embed: language === 'ar' ? 'فقط قم بالنسخ' : 'Get Embed Code',
     };
 
     useEffect(() => {
@@ -161,6 +165,14 @@ export default function AgentsPage() {
                                     🤖
                                 </div>
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <IconButton
+                                        size="sm"
+                                        variant="secondary"
+                                        onClick={() => setEmbedAgent(agent)}
+                                        title={txt.embed}
+                                    >
+                                        &lt;/&gt;
+                                    </IconButton>
                                     <IconButton
                                         size="sm"
                                         onClick={() => openModal(agent)}
@@ -296,5 +308,12 @@ export default function AgentsPage() {
                 </div>
             )}
         </div>
+            {/* Embed Modal */ }
+    <EmbedCodeGenerator
+        agent={embedAgent}
+        isOpen={!!embedAgent}
+        onClose={() => setEmbedAgent(null)}
+    />
+        </div >
     );
 }

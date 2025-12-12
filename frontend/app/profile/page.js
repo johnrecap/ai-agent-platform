@@ -12,7 +12,8 @@ import { useLanguage } from '@/lib/language';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-import { GlassCard, GradientButton } from '@/components/ui';
+import { GlassCard, GradientButton, IconButton } from '@/components/ui';
+import EmbedCodeGenerator from '@/components/EmbedCodeGenerator';
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -21,6 +22,7 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ conversations: 0, messages: 0, agents: 0 });
     const [agents, setAgents] = useState([]);
+    const [embedAgent, setEmbedAgent] = useState(null); // Agent for embed modal
 
     useEffect(() => {
         if (!isLoggedIn()) {
@@ -270,22 +272,34 @@ export default function ProfilePage() {
                             <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t('profile.availableAgents')}</h2>
                             <div className="space-y-3">
                                 {agents.slice(0, 3).map(agent => (
-                                    <Link
-                                        key={agent.id}
-                                        href={`/agent/${agent.id}`}
-                                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--bg-card)] transition-colors group"
-                                    >
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
-                                            🤖
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm text-[var(--text-primary)] truncate">{agent.agent_name}</p>
-                                            <div className="flex items-center gap-1">
-                                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                                                <span className="text-xs text-[var(--text-muted)]">{t('common.online')}</span>
+                                    <div key={agent.id} className="relative group">
+                                        <Link
+                                            href={`/agent/${agent.id}`}
+                                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--bg-card)] transition-colors"
+                                        >
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                                                🤖
                                             </div>
-                                        </div>
-                                    </Link>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm text-[var(--text-primary)] truncate">{agent.agent_name}</p>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                                                    <span className="text-xs text-[var(--text-muted)]">{t('common.online')}</span>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setEmbedAgent(agent);
+                                            }}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-white transition-all bg-black/50 rounded-lg backdrop-blur-sm"
+                                            title={language === 'ar' ? 'تضمين' : 'Embed'}
+                                        >
+                                            &lt;/&gt;
+                                        </button>
+                                    </div>
                                 ))}
                                 {agents.length > 3 && (
                                     <Link href="/" className="block text-center text-sm text-purple-400 hover:text-purple-300 pt-2">
@@ -299,7 +313,14 @@ export default function ProfilePage() {
                         </GlassCard>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+            {/* Embed Modal */}
+            < EmbedCodeGenerator
+                agent={embedAgent}
+                isOpen={!!embedAgent
+                }
+                onClose={() => setEmbedAgent(null)}
+            />
+        </div >
     );
 }
