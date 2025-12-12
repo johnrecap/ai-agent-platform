@@ -27,8 +27,8 @@ export default function ConversationViewer({ conversation }) {
                     >
                         <div
                             className={`max-w-[80%] rounded-2xl px-5 py-3 shadow-md ${msg.role === 'user'
-                                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
-                                    : 'bg-white text-gray-900 border border-gray-200'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
+                                : 'bg-white text-gray-900 border border-gray-200'
                                 }`}
                         >
                             {/* Role indicator */}
@@ -40,10 +40,22 @@ export default function ConversationViewer({ conversation }) {
                             </div>
 
                             {/* Message content */}
-                            <p className={`text-sm leading-relaxed whitespace-pre-wrap break-words ${msg.role === 'user' ? 'text-white' : 'text-gray-700'
-                                }`}>
-                                {msg.content}
-                            </p>
+                            <div
+                                className={`text-sm leading-loose ${msg.role === 'user' ? 'text-white' : 'text-gray-700'}`}
+                                dir="auto"
+                                style={{
+                                    wordBreak: 'break-word',
+                                    overflowWrap: 'anywhere',
+                                    unicodeBidi: 'plaintext',
+                                    textAlign: 'start'
+                                }}
+                            >
+                                {msg.content.split('\n').map((line, lineIndex) => (
+                                    <p key={lineIndex} className="mb-2 last:mb-0" style={{ unicodeBidi: 'plaintext' }}>
+                                        {line || '\u00A0'}
+                                    </p>
+                                ))}
+                            </div>
 
                             {/* Timestamp */}
                             {msg.timestamp && (

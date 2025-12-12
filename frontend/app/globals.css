@@ -340,3 +340,43 @@ body {
   background: var(--primary);
   color: white;
 }
+
+/* ============================================
+   BiDi Text Handling (Arabic-English Mix)
+   ============================================ */
+/* Proper handling for mixed RTL/LTR text */
+[dir="auto"] {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/* Better spacing for emojis in mixed content */
+p,
+div {
+  font-feature-settings: "kern" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure proper line breaking for long words */
+.break-anywhere {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Better emoji rendering */
+span:has(emoji),
+.emoji {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+  font-size: 1.1em;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* Mixed content formatting */
+.chat-message {
+  white-space: pre-wrap;
+  word-break: break-word;
+  unicode-bidi: plaintext;
+  direction: auto;
+}
