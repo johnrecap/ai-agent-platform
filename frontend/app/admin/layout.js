@@ -8,6 +8,7 @@
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminSidebar from '@/components/AdminSidebar';
 import CommandPalette from '@/components/CommandPalette';
+import ChatbotWidget from '@/components/ChatbotWidget';
 import { NotificationProvider, NotificationBell, NotificationPanel } from '@/components/NotificationCenter';
 import { useLanguage } from '@/lib/language';
 import { useEffect, useState } from 'react';
@@ -31,10 +32,10 @@ export default function AdminLayout({ children }) {
 
                     {/* Top Bar with Notifications */}
                     <div className={`fixed top-0 z-40 h-16 flex items-center gap-4 px-6 ${isMobile
-                            ? 'left-0 right-0'
-                            : isRTL
-                                ? 'left-0 right-64'
-                                : 'right-0 left-64'
+                        ? 'left-0 right-0'
+                        : isRTL
+                            ? 'left-0 right-64'
+                            : 'right-0 left-64'
                         }`}>
                         <div className="flex-1" />
                         <button
@@ -67,6 +68,7 @@ export default function AdminLayout({ children }) {
                     {/* Global Components */}
                     <CommandPalette />
                     <NotificationPanel />
+                    <ChatbotWidget />
                 </div>
             </NotificationProvider>
         </ProtectedRoute>
