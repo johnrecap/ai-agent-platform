@@ -57,6 +57,10 @@ const getUserConversations = async (req, res, next) => {
         const { page = 1, limit = 10 } = req.query;
         const offset = (page - 1) * limit;
 
+        if (isNaN(parseInt(req.params.userId))) {
+            throw new ApiError(400, 'Invalid user ID');
+        }
+
         // Users can only access their own conversations unless admin
         if (req.user.role !== 'admin' && req.user.id !== parseInt(req.params.userId)) {
             throw new ApiError(403, 'Access denied');
@@ -108,6 +112,11 @@ const getAgentConversations = async (req, res, next) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const offset = (page - 1) * limit;
+
+        if (isNaN(parseInt(req.params.agentId))) {
+            throw new ApiError(400, 'Invalid agent ID');
+        }
+
         const whereClause = { agent_id: req.params.agentId };
 
         // Check if user owns this agent or is admin
@@ -162,6 +171,10 @@ const getAgentConversations = async (req, res, next) => {
  */
 const getConversation = async (req, res, next) => {
     try {
+        if (isNaN(parseInt(req.params.id))) {
+            throw new ApiError(400, 'Invalid conversation ID');
+        }
+
         const conversation = await Conversation.findByPk(req.params.id, {
             include: [
                 { model: Agent, as: 'agent', attributes: ['id', 'agent_name', 'page_title', 'user_id'] },

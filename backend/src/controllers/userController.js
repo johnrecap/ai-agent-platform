@@ -58,6 +58,10 @@ const getUsers = async (req, res, next) => {
  */
 const getUser = async (req, res, next) => {
     try {
+        if (isNaN(parseInt(req.params.id))) {
+            throw new ApiError(400, 'Invalid user ID');
+        }
+
         const user = await User.findByPk(req.params.id, {
             attributes: { exclude: ['password'] },
             include: [
@@ -120,6 +124,10 @@ const updateUser = async (req, res, next) => {
     try {
         const { name, email, password, role, is_active, agent_id } = req.body;
 
+        if (isNaN(parseInt(req.params.id))) {
+            throw new ApiError(400, 'Invalid user ID');
+        }
+
         const user = await User.findByPk(req.params.id);
         if (!user) {
             throw new ApiError(404, 'User not found');
@@ -177,6 +185,10 @@ const updateUser = async (req, res, next) => {
  */
 const deleteUser = async (req, res, next) => {
     try {
+        if (isNaN(parseInt(req.params.id))) {
+            throw new ApiError(400, 'Invalid user ID');
+        }
+
         const user = await User.findByPk(req.params.id);
         if (!user) {
             throw new ApiError(404, 'User not found');
@@ -236,6 +248,10 @@ const assignAgent = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { agent_id } = req.body;
+
+        if (isNaN(parseInt(id))) {
+            throw new ApiError(400, 'Invalid user ID');
+        }
 
         // User is already fetched by ID in routes usually, but handled here manually
         const user = await User.findByPk(id);
