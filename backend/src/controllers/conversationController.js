@@ -67,11 +67,26 @@ const getUserConversations = async (req, res, next) => {
         }
 
         // Fetch agents owned by this user
-        const userAgents = await Agent.findAll({
+        const ownedAgents = await Agent.findAll({
             where: { user_id: req.params.userId },
             attributes: ['id']
         });
-        const agentIds = userAgents.map(a => a.id);
+
+        // Fetch agents assigned to this user via UserAgent table
+        const { User } = require('../models');
+        const userWithAssignedAgents = await User.findByPk(req.params.userId, {
+            include: [{
+                model: Agent,
+                as: 'assignedAgents',
+                attributes: ['id'],
+                through: { attributes: [] } // Exclude junction table attributes
+            }]
+        });
+
+        // Combine both owned and assigned agent IDs
+        const ownedAgentIds = ownedAgents.map(a => a.id);
+        const assignedAgentIds = userWithAssignedAgents?.assignedAgents?.map(a => a.id) || [];
+        const agentIds = [...new Set([...ownedAgentIds, ...assignedAgentIds])]; // Remove duplicates
 
         const { count, rows: conversations } = await Conversation.findAndCountAll({
             where: {
@@ -187,14 +202,29 @@ const getConversation = async (req, res, next) => {
         }
 
         // Check access rights - admins can view all, users can only view their own
-        // Dify conversations may not have user_id, allow admin to view them
-        // Dify conversations may not have user_id, allow admin to view them
-        // Also allow the OWNER of the agent to view the conversation
+        // Allow access if:
+        // 1. User is admin
+        // 2. User is the conversation participant (conversation.user_id matches)
+        // 3. User owns the agent (agent.user_id matches)
+        // 4. User is assigned to the agent via UserAgent table
         const isAdmin = req.user.role === 'admin';
         const isParticipant = conversation.user_id && req.user.id === conversation.user_id;
         const isAgentOwner = conversation.agent && conversation.agent.user_id === req.user.id;
 
-        if (!isAdmin && !isParticipant && !isAgentOwner) {
+        // Check if user is assigned to this agent via UserAgent table
+        let isAssignedToAgent = false;
+        if (conversation.agent && !isAdmin && !isParticipant && !isAgentOwner) {
+            const { UserAgent } = require('../models');
+            const assignment = await UserAgent.findOne({
+                where: {
+                    user_id: req.user.id,
+                    agent_id: conversation.agent.id
+                }
+            });
+            isAssignedToAgent = !!assignment;
+        }
+
+        if (!isAdmin && !isParticipant && !isAgentOwner && !isAssignedToAgent) {
             throw new ApiError(403, 'Access denied');
         }
 
