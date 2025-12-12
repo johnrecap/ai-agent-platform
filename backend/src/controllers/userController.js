@@ -118,7 +118,7 @@ const createUser = async (req, res, next) => {
  */
 const updateUser = async (req, res, next) => {
     try {
-        const { name, email, password, role, is_active } = req.body;
+        const { name, email, password, role, is_active, agent_id } = req.body;
 
         const user = await User.findByPk(req.params.id);
         if (!user) {
@@ -130,7 +130,28 @@ const updateUser = async (req, res, next) => {
             throw new ApiError(400, 'Cannot change your own role');
         }
 
-        // Update fields
+        // Enforce single admin if role is being changed to admin
+        if (role === 'admin' && user.role !== 'admin') {
+            const existingAdmin = await User.findOne({ where: { role: 'admin' } });
+            if (existingAdmin && existingAdmin.id !== user.id) {
+                throw new ApiError(400, 'An admin already exists');
+            }
+        }
+
+        // If agent_id provided, validate existence and uniqueness
+        if (agent_id) {
+            const agent = await Agent.findByPk(agent_id);
+            if (!agent) {
+                throw new ApiError(400, 'Agent not found');
+            }
+            const existingLink = await User.findOne({ where: { agent_id, id: { [Op.ne]: user.id } } });
+            if (existingLink) {
+                throw new ApiError(400, 'Agent already assigned to another user');
+            }
+            user.agent_id = agent_id;
+        }
+
+        // Update other fields
         if (name) user.name = name;
         if (email) user.email = email;
         if (password) user.password = password;
@@ -216,5 +237,6 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    searchUsers
+    searchUsers,
+    assignAgent
 };

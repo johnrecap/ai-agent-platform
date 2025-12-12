@@ -6,6 +6,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const bcrypt = require('bcryptjs');
+const Agent = require('./Agent');
 
 const User = sequelize.define('User', {
     id: {
@@ -48,6 +49,15 @@ const User = sequelize.define('User', {
     is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
+    },
+    agent_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'agents',
+            key: 'id'
+        },
+        unique: true
     }
 }, {
     tableName: 'users',
@@ -81,6 +91,10 @@ User.prototype.toJSON = function () {
     const values = Object.assign({}, this.get());
     delete values.password;
     return values;
+};
+
+User.associate = function (models) {
+    User.belongsTo(models.Agent, { as: 'agent', foreignKey: 'agent_id' });
 };
 
 module.exports = User;

@@ -23,7 +23,7 @@ export default function AdminSidebar() {
         { icon: '🏠', labelKey: 'admin.dashboard', href: '/admin', exact: true },
         { icon: '👥', labelKey: 'admin.users', href: '/admin/users' },
         { icon: '🤖', labelKey: 'admin.agents', href: '/admin/agents' },
-        { icon: '💬', labelKey: 'conversations.title', href: '/admin/conversations/upload' },
+        { icon: '💬', labelKey: 'conversations.title', href: '/admin/conversations' },
         { icon: '📊', labelKey: 'admin.analytics', href: '/admin/analytics' },
         { icon: '⚙️', labelKey: 'settings.title', href: '/admin/settings' },
     ];

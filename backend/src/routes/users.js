@@ -31,6 +31,8 @@ router.get('/:id', userController.getUser);
 // @desc    Create new user
 // @access  Private/Admin
 router.post('/', userController.createUser);
+// Assign agent to a user (admin only)
+router.post('/:id/assign-agent', userController.assignAgent);
 
 // @route   PUT /api/users/:id
 // @desc    Update user
