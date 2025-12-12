@@ -164,7 +164,7 @@ const getConversation = async (req, res, next) => {
     try {
         const conversation = await Conversation.findByPk(req.params.id, {
             include: [
-                { model: Agent, as: 'agent', attributes: ['id', 'agent_name', 'page_title'] },
+                { model: Agent, as: 'agent', attributes: ['id', 'agent_name', 'page_title', 'user_id'] },
                 { model: User, as: 'user', attributes: ['id', 'name', 'email'] }
             ]
         });
@@ -175,10 +175,13 @@ const getConversation = async (req, res, next) => {
 
         // Check access rights - admins can view all, users can only view their own
         // Dify conversations may not have user_id, allow admin to view them
+        // Dify conversations may not have user_id, allow admin to view them
+        // Also allow the OWNER of the agent to view the conversation
         const isAdmin = req.user.role === 'admin';
-        const isOwner = conversation.user_id && req.user.id === conversation.user_id;
+        const isParticipant = conversation.user_id && req.user.id === conversation.user_id;
+        const isAgentOwner = conversation.agent && conversation.agent.user_id === req.user.id;
 
-        if (!isAdmin && !isOwner) {
+        if (!isAdmin && !isParticipant && !isAgentOwner) {
             throw new ApiError(403, 'Access denied');
         }
 
