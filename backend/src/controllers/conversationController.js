@@ -9,15 +9,44 @@ const { Op } = require('sequelize');
 
 /**
  * @route   GET /api/conversations
- * @desc    Get all conversations (Admin)
- * @access  Private/Admin
+ * @desc    Get current user's conversations (works for both admin and regular users)
+ * @access  Private
  */
 const getConversations = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, status = '', agentId = '' } = req.query;
         const offset = (page - 1) * limit;
 
-        const whereClause = {};
+        // Get owned agents
+        const ownedAgents = await Agent.findAll({
+            where: { user_id: req.user.id },
+            attributes: ['id']
+        });
+
+        // Get assigned agents via UserAgent table
+        const { User } = require('../models');
+        const userWithAssignedAgents = await User.findByPk(req.user.id, {
+            include: [{
+                model: Agent,
+                as: 'assignedAgents',
+                attributes: ['id'],
+                through: { attributes: [] }
+            }]
+        });
+
+        // Combine both owned and assigned agent IDs
+        const ownedAgentIds = ownedAgents.map(a => a.id);
+        const assignedAgentIds = userWithAssignedAgents?.assignedAgents?.map(a => a.id) || [];
+        const agentIds = [...new Set([...ownedAgentIds, ...assignedAgentIds])];
+
+        // Build where clause
+        const whereClause = {
+            [Op.or]: [
+                { user_id: req.user.id },
+                { agent_id: { [Op.in]: agentIds } }
+            ]
+        };
+
         if (status) whereClause.status = status;
         if (agentId) whereClause.agent_id = agentId;
 

@@ -79,8 +79,8 @@ router.delete('/:id', excelUploadController.deleteConversation);
 router.get('/:id', conversationController.getConversation);
 
 // @route   GET /api/conversations
-// @desc    Get all conversations (Admin)
-// @access  Private/Admin
-router.get('/', adminAuth, conversationController.getConversations);
+// @desc    Get current user's conversations
+// @access  Private
+router.get('/', conversationController.getConversations);
 
 module.exports = router;
