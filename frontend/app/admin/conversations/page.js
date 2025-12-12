@@ -199,20 +199,25 @@ export default function AdminConversationsPage() {
                                     style={{ animationDelay: `${index * 50}ms` }}
                                 >
                                     <div className="flex items-start justify-between gap-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg">
+                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg shrink-0">
                                                 💬
                                             </div>
-                                            <div>
+                                            <div className="flex-1 min-w-0">
                                                 <h3 className="font-medium text-[var(--text-primary)] line-clamp-1">
-                                                    {conv.title || conv.agent?.agent_name || 'Conversation'}
+                                                    {conv.title || `Conversation #${conv.id}`}
                                                 </h3>
-                                                <p className="text-sm text-[var(--text-secondary)]">
+                                                {conv.agent && (
+                                                    <p className="text-xs text-purple-400 font-medium mt-0.5">
+                                                        🤖 {conv.agent.agent_name}
+                                                    </p>
+                                                )}
+                                                <p className="text-sm text-[var(--text-secondary)] mt-1">
                                                     {conv.message_count} {txt.messages} • {new Date(conv.created_at).toLocaleDateString()}
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className={`text-xs px-2 py-1 rounded-full border ${getTypeColor(conv.conversation_type)}`}>
+                                        <span className={`text-xs px-2 py-1 rounded-full border ${getTypeColor(conv.conversation_type)} shrink-0`}>
                                             {conv.conversation_type || 'general'}
                                         </span>
                                     </div>
