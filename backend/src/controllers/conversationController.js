@@ -96,6 +96,7 @@ const getAgentConversations = async (req, res, next) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const offset = (page - 1) * limit;
+        const whereClause = { agent_id: req.params.agentId };
 
         // Check if user owns this agent or is admin
         const agent = await Agent.findByPk(req.params.agentId);
@@ -103,12 +104,25 @@ const getAgentConversations = async (req, res, next) => {
             throw new ApiError(404, 'Agent not found');
         }
 
-        if (req.user.role !== 'admin' && req.user.id !== agent.user_id) {
-            throw new ApiError(403, 'Access denied');
+        if (req.user.role !== 'admin') {
+            // If not admin, MUST be the owner OR just strict user_id check
+            // The requirement is "Regular users should only see conversations where conversation.user_id matches their own req.user.id"
+            // So even if they "own" the agent, they shouldn't see other users' chats (unless they are admin)
+            if (req.user.id !== agent.user_id) {
+                // If they don't even own the agent, definitely deny (though we might just want to restrict to user_id anyway)
+                throw new ApiError(403, 'Access denied');
+            }
+            // CRITICAL FIX: Even if they own the agent, force filter by their own user_id
+            // to prevent seeing other users' conversations with this agent.
+            // If the goal is "Agent Owner sees all", then remove this. 
+            // But user said: "Restricting regular users' conversation viewing to only those associated with their linked AI agent OR their user ID"
+            // AND "The conversation of the other user is appearing in my conversations" -> We must stop this.
+            // We will filter by user_id for non-admins.
+            whereClause.user_id = req.user.id;
         }
 
         const { count, rows: conversations } = await Conversation.findAndCountAll({
-            where: { agent_id: req.params.agentId },
+            where: whereClause,
             limit: parseInt(limit),
             offset: parseInt(offset),
             order: [['created_at', 'DESC']]
