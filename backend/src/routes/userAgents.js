@@ -12,8 +12,51 @@ const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 const { ApiError } = require('../middleware/errorHandler');
 
-// All routes require admin
+// All routes require authentication
 router.use(auth);
+
+/**
+ * @route   GET /api/user-agents/my-agents
+ * @desc    Get current user's agents (owned + assigned)
+ * @access  Private (any authenticated user)
+ */
+router.get('/my-agents', async (req, res, next) => {
+    try {
+        // Get owned agents
+        const ownedAgents = await Agent.findAll({
+            where: { user_id: req.user.id },
+            attributes: ['id', 'agent_name', 'page_title', 'status']
+        });
+
+        // Get assigned agents
+        const userWithAssignedAgents = await User.findByPk(req.user.id, {
+            include: [{
+                model: Agent,
+                as: 'assignedAgents',
+                attributes: ['id', 'agent_name', 'page_title', 'status']
+            }]
+        });
+
+        // Combine and remove duplicates
+        const allAgents = [...ownedAgents];
+        const assignedAgents = userWithAssignedAgents?.assignedAgents || [];
+
+        assignedAgents.forEach(agent => {
+            if (!allAgents.find(a => a.id === agent.id)) {
+                allAgents.push(agent);
+            }
+        });
+
+        res.json({
+            success: true,
+            data: allAgents
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Admin-only routes below
 router.use(adminAuth);
 
 /**

@@ -16,6 +16,7 @@ import Pagination from '@/components/Pagination';
 export default function AdminConversationsPage() {
     const { language, isRTL } = useLanguage();
     const [conversations, setConversations] = useState([]);
+    const [agents, setAgents] = useState([]); // List of user's agents
     const [loading, setLoading] = useState(true);
     const [syncing, setSyncing] = useState(false);
     const [syncStatus, setSyncStatus] = useState(null);
@@ -23,6 +24,7 @@ export default function AdminConversationsPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [selectedConversation, setSelectedConversation] = useState(null);
     const [filter, setFilter] = useState('all'); // all, dify, excel
+    const [selectedAgent, setSelectedAgent] = useState(null); // Filter by agent ID
 
     const txt = {
         title: language === 'ar' ? 'المحادثات' : 'Conversations',
@@ -44,9 +46,19 @@ export default function AdminConversationsPage() {
     };
 
     useEffect(() => {
+        loadAgents();
         loadConversations();
         checkDifyStatus();
-    }, [page, filter]);
+    }, [page, filter, selectedAgent]);
+
+    const loadAgents = async () => {
+        try {
+            const response = await api.get('/api/user-agents/my-agents');
+            setAgents(response.data.data || []);
+        } catch (error) {
+            console.error('Error loading agents:', error);
+        }
+    };
 
     const loadConversations = async () => {
         setLoading(true);
@@ -54,6 +66,7 @@ export default function AdminConversationsPage() {
             const params = { page, limit: 10 };
             if (filter === 'dify') params.type = 'dify';
             if (filter === 'excel') params.type = 'excel';
+            if (selectedAgent) params.agentId = selectedAgent;
 
             const response = await api.get('/api/conversations', { params });
             setConversations(response.data.data || []);
@@ -147,18 +160,30 @@ export default function AdminConversationsPage() {
                 </GlassCard>
             )}
 
-            {/* Filter Tabs */}
-            <div className="flex gap-2 mb-6">
-                {['all', 'dify'].map((f) => (
+            {/* Agent Tabs */}
+            <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+                {/* All Tab */}
+                <button
+                    onClick={() => { setSelectedAgent(null); setPage(1); }}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${!selectedAgent
+                        ? 'bg-purple-500 text-white'
+                        : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-primary)]'
+                        }`}
+                >
+                    📋 {txt.all}
+                </button>
+
+                {/* Dynamic Agent Tabs */}
+                {agents.map((agent) => (
                     <button
-                        key={f}
-                        onClick={() => { setFilter(f); setPage(1); }}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === f
+                        key={agent.id}
+                        onClick={() => { setSelectedAgent(agent.id); setPage(1); }}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${selectedAgent === agent.id
                             ? 'bg-purple-500 text-white'
                             : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-primary)]'
                             }`}
                     >
-                        {f === 'all' ? txt.all : txt.dify}
+                        🤖 {agent.agent_name}
                     </button>
                 ))}
             </div>
