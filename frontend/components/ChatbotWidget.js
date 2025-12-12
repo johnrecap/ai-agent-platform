@@ -12,7 +12,7 @@ export default function ChatbotWidget() {
         // Create script element
         const script = document.createElement('script');
         script.src = 'https://ai-agent-platform-three.vercel.app/widget.js';
-        script.setAttribute('data-agent-url', 'https://ai-agent-platform-three.vercel.app/agent/5');
+        script.setAttribute('data-agent-url', 'https://ai-agent-platform-three.vercel.app/agent/4');
         script.setAttribute('data-style', 'bubble');
         script.setAttribute('data-color', '#8b5cf6');
         script.setAttribute('data-position', 'bottom-right');
