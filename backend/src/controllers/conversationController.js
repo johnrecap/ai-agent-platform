@@ -62,8 +62,20 @@ const getUserConversations = async (req, res, next) => {
             throw new ApiError(403, 'Access denied');
         }
 
-        const { count, rows: conversations } = await Conversation.findAndCountAll({
+        // Fetch agents owned by this user
+        const userAgents = await Agent.findAll({
             where: { user_id: req.params.userId },
+            attributes: ['id']
+        });
+        const agentIds = userAgents.map(a => a.id);
+
+        const { count, rows: conversations } = await Conversation.findAndCountAll({
+            where: {
+                [Op.or]: [
+                    { user_id: req.params.userId },
+                    { agent_id: { [Op.in]: agentIds } }
+                ]
+            },
             limit: parseInt(limit),
             offset: parseInt(offset),
             order: [['created_at', 'DESC']],

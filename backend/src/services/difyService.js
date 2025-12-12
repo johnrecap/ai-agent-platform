@@ -176,7 +176,7 @@ class DifyService {
                         // Create new conversation
                         await Conversation.create({
                             agent_id: agentId,
-                            user_id: userId,
+                            user_id: null, // Dify conversations are anonymous/external, so no platform user link
                             thread_id: difyConv.id,
                             session_id: `dify_${difyConv.id}`,
                             title: convTitle,
