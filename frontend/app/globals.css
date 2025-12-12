@@ -380,3 +380,38 @@ span:has(emoji),
   unicode-bidi: plaintext;
   direction: auto;
 }
+
+/* ============================================
+   Arabic Font Support & Encoding
+   ============================================ */
+/* Ensure proper Arabic font rendering */
+body,
+html {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Cairo', 'Tajawal', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Force UTF-8 encoding for Arabic text */
+[lang="ar"],
+[dir="rtl"],
+.arabic-text {
+  font-family: 'Cairo', 'Tajawal', 'Noto Sans Arabic', 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Better fallback for Arabic characters */
+* {
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+/* Prevent character corruption */
+p,
+div,
+span {
+  text-transform: none;
+  font-synthesis: none;
+}
