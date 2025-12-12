@@ -231,6 +231,46 @@ const searchUsers = async (req, res, next) => {
     }
 };
 
+// New endpoint: assign agent to a user (admin only)
+const assignAgent = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { agent_id } = req.body;
+
+        // User is already fetched by ID in routes usually, but handled here manually
+        const user = await User.findByPk(id);
+        if (!user) {
+            throw new ApiError(404, 'User not found');
+        }
+
+        if (!agent_id) {
+            throw new ApiError(400, 'agent_id is required');
+        }
+
+        const agent = await Agent.findByPk(agent_id);
+        if (!agent) {
+            throw new ApiError(400, 'Agent not found');
+        }
+
+        // Ensure agent not already linked to another user
+        const existingLink = await User.findOne({ where: { agent_id } });
+        if (existingLink && existingLink.id !== user.id) {
+            throw new ApiError(400, 'Agent already assigned to another user');
+        }
+
+        user.agent_id = agent_id;
+        await user.save();
+
+        res.json({
+            success: true,
+            data: user.toJSON(),
+            message: 'Agent assigned to user successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getUsers,
     getUser,
