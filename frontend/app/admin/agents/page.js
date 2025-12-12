@@ -307,13 +307,12 @@ export default function AgentsPage() {
                     </div>
                 </div>
             )}
+            {/* Embed Modal */}
+            <EmbedCodeGenerator
+                agent={embedAgent}
+                isOpen={!!embedAgent}
+                onClose={() => setEmbedAgent(null)}
+            />
         </div>
-            {/* Embed Modal */ }
-    <EmbedCodeGenerator
-        agent={embedAgent}
-        isOpen={!!embedAgent}
-        onClose={() => setEmbedAgent(null)}
-    />
-        </div >
     );
 }
