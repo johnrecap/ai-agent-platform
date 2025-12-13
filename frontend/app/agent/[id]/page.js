@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ChatInterface from '@/components/ChatInterface';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -15,6 +15,9 @@ import Image from 'next/image';
 export default function AgentPage() {
     const params = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const isWidgetMode = searchParams.get('mode') === 'widget';
+
     const [agent, setAgent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -49,10 +52,9 @@ export default function AgentPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#1a0a1a] flex items-center justify-center">
+            <div className={`min-h-screen flex items-center justify-center ${isWidgetMode ? 'bg-transparent' : 'bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#1a0a1a]'}`}>
                 <div className="text-center">
                     <LoadingSpinner size="lg" />
-                    <p className="text-gray-400 mt-4">جاري التحميل...</p>
                 </div>
             </div>
         );
@@ -76,6 +78,21 @@ export default function AgentPage() {
         );
     }
 
+    // Widget Mode - Clean Interface
+    if (isWidgetMode) {
+        return (
+            <div className="h-screen w-screen overflow-hidden bg-transparent">
+                <ChatInterface
+                    agentId={agent.id}
+                    agentName={agent.agent_name}
+                    avatarUrl={agent.avatar_url}
+                    isWidget={true}
+                />
+            </div>
+        );
+    }
+
+    // Full Page Mode
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#1a0a1a]">
             {/* Decorative Background */}
@@ -104,11 +121,13 @@ export default function AgentPage() {
 
             {/* Chat Container */}
             <main className="relative z-10 max-w-4xl mx-auto px-4 py-6">
-                <ChatInterface
-                    agentId={agent.id}
-                    agentName={agent.agent_name}
-                    avatarUrl={agent.avatar_url}
-                />
+                <div className="h-[80vh] rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+                    <ChatInterface
+                        agentId={agent.id}
+                        agentName={agent.agent_name}
+                        avatarUrl={agent.avatar_url}
+                    />
+                </div>
             </main>
 
             {/* Footer */}
