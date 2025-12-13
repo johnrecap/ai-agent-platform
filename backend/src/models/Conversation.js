@@ -67,17 +67,34 @@ const Conversation = sequelize.define('Conversation', {
         validate: {
             isIn: { args: [['active', 'completed', 'archived']], msg: 'Invalid status' }
         }
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment: 'Soft delete timestamp'
+    },
+    deleted_by: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'users',
+            key: 'id'
+        },
+        comment: 'User who deleted this conversation'
     }
 }, {
     tableName: 'conversations',
     timestamps: true,
     underscored: true,
+    paranoid: true,  // Enable soft delete
+    deletedAt: 'deleted_at',  // Custom column name for soft delete
     indexes: [
         { fields: ['agent_id'] },
         { fields: ['user_id'] },
         { fields: ['conversation_type'] },
         { fields: ['status'] },
-        { fields: ['created_at'] }
+        { fields: ['created_at'] },
+        { fields: ['deleted_at'] }  // Index for soft delete queries
     ]
 });
 

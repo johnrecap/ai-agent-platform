@@ -8,6 +8,7 @@ const router = express.Router();
 const multer = require('multer');
 const conversationController = require('../controllers/conversationController');
 const excelUploadController = require('../controllers/excelUploadController');
+const deleteController = require('../controllers/conversationDeleteController');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 
@@ -63,15 +64,40 @@ router.get('/user/:userId', conversationController.getUserConversations);
 // @access  Private
 router.get('/agent/:agentId', conversationController.getAgentConversations);
 
-// @route   DELETE /api/conversations/bulk
-// @desc    Delete multiple conversations
-// @access  Private/Admin
-router.delete('/bulk', adminAuth, excelUploadController.bulkDeleteConversations);
+// @route   GET /api/conversations/trash
+// @desc    Get deleted conversations (trash)
+// @access  Private
+router.get('/trash', deleteController.getTrash);
+
+// @route   POST /api/conversations/bulk-delete
+// @desc    Soft delete multiple conversations
+// @access  Private
+router.post('/bulk-delete', deleteController.bulkSoftDelete);
+
+// @route   POST /api/conversations/bulk-restore
+// @desc    Restore multiple conversations
+// @access  Private
+router.post('/bulk-restore', deleteController.bulkRestore);
+
+// @route   DELETE /api/conversations/trash/empty
+// @desc    Empty trash (permanent delete all)
+// @access  Admin
+router.delete('/trash/empty', adminAuth, deleteController.emptyTrash);
+
+// @route   POST /api/conversations/:id/restore
+// @desc    Restore a deleted conversation
+// @access  Private
+router.post('/:id/restore', deleteController.restore);
+
+// @route   DELETE /api/conversations/:id/permanent
+// @desc    Permanently delete a conversation (hard delete)
+// @access  Admin
+router.delete('/:id/permanent', adminAuth, deleteController.permanentDelete);
 
 // @route   DELETE /api/conversations/:id
-// @desc    Delete a conversation
+// @desc    Soft delete a conversation (move to trash)
 // @access  Private
-router.delete('/:id', excelUploadController.deleteConversation);
+router.delete('/:id', deleteController.softDelete);
 
 // @route   GET /api/conversations/:id
 // @desc    Get single conversation

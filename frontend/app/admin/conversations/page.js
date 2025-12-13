@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { GlassCard, GradientButton, Skeleton, StatusBadge, EmptyState } from '@/components/ui';
 import ConversationViewer from '@/components/ConversationViewer';
 import Pagination from '@/components/Pagination';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 
 export default function AdminConversationsPage() {
     const { language, isRTL } = useLanguage();
@@ -25,6 +26,7 @@ export default function AdminConversationsPage() {
     const [selectedConversation, setSelectedConversation] = useState(null);
     const [filter, setFilter] = useState('all'); // all, dify, excel
     const [selectedAgent, setSelectedAgent] = useState(null); // Filter by agent ID
+    const [deleteModal, setDeleteModal] = useState({ open: false, id: null });
 
     const txt = {
         title: language === 'ar' ? 'المحادثات' : 'Conversations',
@@ -113,6 +115,16 @@ export default function AdminConversationsPage() {
         if (type === 'dify') return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
         if (type === 'excel') return 'bg-green-500/20 text-green-400 border-green-500/30';
         return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await api.delete(`/api/conversations/${id}`);
+            toast.success('Conversation moved to trash');
+            loadConversations();
+        } catch (error) {
+            toast.error('Delete failed');
+        }
     };
 
     return (
@@ -218,13 +230,15 @@ export default function AdminConversationsPage() {
                             {conversations.map((conv, index) => (
                                 <div
                                     key={conv.id}
-                                    onClick={() => viewConversation(conv.id)}
-                                    className={`p-4 cursor-pointer transition-all hover:bg-[var(--bg-card-hover)] animate-fadeInUp ${selectedConversation?.id === conv.id ? 'bg-purple-500/10 border-l-4 border-purple-500' : ''
+                                    className={`p-4 transition-all animate-fadeInUp group ${selectedConversation?.id === conv.id ? 'bg-purple-500/10 border-l-4 border-purple-500' : ''
                                         }`}
                                     style={{ animationDelay: `${index * 50}ms` }}
                                 >
                                     <div className="flex items-start justify-between gap-3">
-                                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                                        <div
+                                            onClick={() => viewConversation(conv.id)}
+                                            className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+                                        >
                                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-lg shrink-0">
                                                 💬
                                             </div>
@@ -242,9 +256,21 @@ export default function AdminConversationsPage() {
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className={`text-xs px-2 py-1 rounded-full border ${getTypeColor(conv.conversation_type)} shrink-0`}>
-                                            {conv.conversation_type || 'general'}
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-xs px-2 py-1 rounded-full border ${getTypeColor(conv.conversation_type)} shrink-0`}>
+                                                {conv.conversation_type || 'general'}
+                                            </span>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDeleteModal({ open: true, id: conv.id });
+                                                }}
+                                                className="opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/20 rounded-lg transition-all text-red-400 hover:text-red-300"
+                                                title="Delete"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -297,6 +323,13 @@ export default function AdminConversationsPage() {
                     )}
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <DeleteConfirmationModal
+                isOpen={deleteModal.open}
+                onClose={() => setDeleteModal({ open: false, id: null })}
+                onConfirm={() => handleDelete(deleteModal.id)}
+            />
         </div>
     );
 }
