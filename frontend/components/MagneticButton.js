@@ -10,6 +10,7 @@ import { useRef, useState, useEffect } from 'react';
  * - Smooth easing motion
  * - Returns to original position
  * - Optional shimmer effect
+ * - Click ripple effect
  * - Disabled on mobile
  */
 
@@ -72,11 +73,39 @@ export default function MagneticButton({
         };
     }, []);
 
+    // Ripple effect on click
+    const createRipple = (e) => {
+        const button = e.currentTarget;
+        const rect = button.getBoundingClientRect();
+
+        // Calculate click position relative to button
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Create ripple element
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple-effect';
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+
+        button.appendChild(ripple);
+
+        // Remove ripple after animation
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+
+        // Call original onClick if provided
+        if (onClick) {
+            onClick(e);
+        }
+    };
+
     const shimmerClass = shimmer
         ? 'relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:animate-shimmer'
         : '';
 
-    const baseClass = `transition-all duration-300 ease-out ${shimmerClass} ${className}`;
+    const baseClass = `relative overflow-hidden transition-all duration-300 ease-out ${shimmerClass} ${className}`;
 
     const style = {
         transform: `translate(${offset.x}px, ${offset.y}px) scale(${isHovering ? 1.05 : 1})`,
@@ -89,6 +118,7 @@ export default function MagneticButton({
                 href={href}
                 className={baseClass}
                 style={style}
+                onClick={createRipple}
                 {...props}
             >
                 {children}
@@ -99,7 +129,7 @@ export default function MagneticButton({
     return (
         <button
             ref={buttonRef}
-            onClick={onClick}
+            onClick={createRipple}
             className={baseClass}
             style={style}
             {...props}

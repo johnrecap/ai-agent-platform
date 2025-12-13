@@ -31,6 +31,9 @@ import TypingText from '@/components/TypingText';
 import TiltCard from '@/components/TiltCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import BentoGrid from '@/components/BentoGrid';
+import MeshGradient from '@/components/MeshGradient';
+import ScrollIndicator from '@/components/ScrollIndicator';
+import ScrollProgressBar from '@/components/ScrollProgressBar';
 
 // Modern icons from Lucide
 import {
@@ -120,6 +123,30 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[var(--role-background)] text-[var(--role-text-primary)]" dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Scroll Progress Bar */}
+      <ScrollProgressBar />
+
+      {/* Noise Texture Overlay */}
+      <svg
+        style={{
+          position: 'fixed',
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          opacity: 0.03,
+          zIndex: 1,
+          top: 0,
+          left: 0
+        }}
+      >
+        <filter id="noise">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" />
+          <feColorMatrix type="saturate" values="0" />
+          <feBlend mode="overlay" in="SourceGraphic" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#noise)" />
+      </svg>
+
       {/* Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--role-border)] bg-[var(--role-surface)]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -176,6 +203,7 @@ export default function LandingPage() {
           <ParticleSystem count={30} />
           <MorphingBlob />
           <ParallaxOrbs />
+          <MeshGradient />
 
           {/* Content */}
           <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -214,6 +242,9 @@ export default function LandingPage() {
               <TrustStrip isRTL={isRTL} />
             </div>
           </div>
+
+          {/* Scroll Indicator */}
+          <ScrollIndicator />
         </section>
 
         {/* Problem → Solution → Result Section */}
