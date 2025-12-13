@@ -26,14 +26,9 @@ import TrustStrip from '@/components/TrustStrip';
 import PersonalizationSwitcher from '@/components/PersonalizationSwitcher';
 import MagneticButton from '@/components/MagneticButton';
 import TypingText from '@/components/TypingText';
-import TiltCard from '@/components/TiltCard';
 import ScrollReveal from '@/components/ScrollReveal';
-import BentoGrid from '@/components/BentoGrid';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import ScrollProgressBar from '@/components/ScrollProgressBar';
-import FAQAccordion from '@/components/FAQAccordion';
-import LogoShowcase from '@/components/LogoShowcase';
-import Timeline from '@/components/Timeline';
 
 // Lazy load heavy animation components for better performance
 const ParticleSystem = dynamic(() => import('@/components/ParticleSystem'), {
@@ -65,6 +60,13 @@ const FloatingChatbot = dynamic(() => import('@/components/FloatingChatbot'), {
   loading: () => null,
   ssr: false
 });
+
+// Lazy load below-the-fold components
+const TiltCard = dynamic(() => import('@/components/TiltCard'), { loading: () => null });
+const BentoGrid = dynamic(() => import('@/components/BentoGrid'), { loading: () => null });
+const Timeline = dynamic(() => import('@/components/Timeline'), { loading: () => null });
+const LogoShowcase = dynamic(() => import('@/components/LogoShowcase'), { loading: () => null });
+const FAQAccordion = dynamic(() => import('@/components/FAQAccordion'), { loading: () => null });
 
 // Modern icons from Lucide
 import {
