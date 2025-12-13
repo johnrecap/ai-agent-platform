@@ -47,7 +47,7 @@ export default function ParticleSystem({ count: propCount }) {
 
         // Adjust particle count for mobile and performance
         const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? Math.min(baseCount, 8) : baseCount;
+        const particleCount = isMobile ? Math.min(baseCount, 5) : baseCount;
 
         // Initialize particles
         const colors = ['#8B5CF6', '#EC4899', '#06B6D4', '#A78BFA'];

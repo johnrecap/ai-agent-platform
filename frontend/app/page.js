@@ -291,8 +291,8 @@ export default function LandingPage() {
             </div>
 
             {/* Headline - Increased top margin significantly to prevent overlap with switcher */}
-            <div ref={headlineRef} className="relative z-20 mt-20 mb-16 pb-8 overflow-visible">
-              <div className="max-w-4xl mx-auto">
+            <div ref={headlineRef} className="relative z-20 mt-20 mb-16 pb-8 overflow-visible min-h-[160px] flex items-center justify-center">
+              <div className="max-w-4xl mx-auto w-full">
                 <h1 className="text-h1 mb-0 leading-tight">
                   <TypingText
                     text={content.headline}
@@ -304,7 +304,7 @@ export default function LandingPage() {
             </div>
 
             {/* Subheadline */}
-            <p ref={subheadRef} className="text-h3 text-[var(--role-text-secondary)] mb-12 max-w-3xl mx-auto font-normal">
+            <p ref={subheadRef} className="text-h3 text-[var(--role-text-secondary)] mb-12 max-w-3xl mx-auto font-normal min-h-[84px] flex items-center justify-center">
               {content.subhead}
             </p>
 
