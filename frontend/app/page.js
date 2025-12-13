@@ -25,6 +25,10 @@ import FloatingChatbot from '@/components/FloatingChatbot';
 import ParticleSystem from '@/components/ParticleSystem';
 import MorphingBlob from '@/components/MorphingBlob';
 import ParallaxOrbs from '@/components/ParallaxOrbs';
+import CustomCursor from '@/components/CustomCursor';
+import MagneticButton from '@/components/MagneticButton';
+import TypingText from '@/components/TypingText';
+import TiltCard from '@/components/TiltCard';
 
 // Modern icons from Lucide
 import {
@@ -179,8 +183,12 @@ export default function LandingPage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-h1 mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent">
-              {content.headline}
+            <h1 className="text-h1 mb-6">
+              <TypingText
+                text={content.headline}
+                speed={50}
+                className="bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent"
+              />
             </h1>
 
             {/* Subheadline */}
@@ -189,14 +197,15 @@ export default function LandingPage() {
             </p>
 
             {/* CTA Button */}
-            <Link
+            <MagneticButton
               href="/login"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-lg shadow-[var(--elevation-4)] hover:shadow-[var(--elevation-5)] interactive group"
+              shimmer={true}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-lg shadow-[var(--elevation-4)] hover:shadow-[var(--elevation-5)] group"
             >
               <Sparkles className="w-5 h-5" />
               {content.cta}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-[var(--motion-micro-duration)]" />
-            </Link>
+            </MagneticButton>
 
             {/* Trust Strip */}
             <div className="mt-16">
@@ -224,9 +233,9 @@ export default function LandingPage() {
               const Icon = card.icon;
 
               return (
-                <div
+                <TiltCard
                   key={index}
-                  className="p-8 rounded-2xl bg-[var(--role-surface)] border border-[var(--role-border)] interactive group"
+                  className="p-8 rounded-2xl bg-[var(--role-surface)] border border-[var(--role-border)] group"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   {/* Icon */}
@@ -271,7 +280,7 @@ export default function LandingPage() {
                       {card.metric}
                     </div>
                   </div>
-                </div>
+                </TiltCard>
               );
             })}
           </div>
@@ -289,14 +298,15 @@ export default function LandingPage() {
                 : 'Join thousands of businesses using our platform'
               }
             </p>
-            <Link
+            <MagneticButton
               href="/login"
-              className="inline-flex items-center gap-3 px-10 py-5 bg-white text-purple-600 rounded-2xl font-bold text-lg hover:scale-105 interactive shadow-[var(--elevation-5)]"
+              shimmer={true}
+              className="inline-flex items-center gap-3 px-10 py-5 bg-white text-purple-600 rounded-2xl font-bold text-lg hover:scale-105 shadow-[var(--elevation-5)]"
             >
               <Sparkles className="w-5 h-5" />
               {isRTL ? 'ابدأ الآن مجاناً' : 'Start Free Now'}
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </MagneticButton>
           </div>
         </section>
 
@@ -318,6 +328,9 @@ export default function LandingPage() {
 
       {/* Floating Chatbot */}
       <FloatingChatbot />
+
+      {/* Custom Cursor */}
+      <CustomCursor />
     </div>
   );
 }
