@@ -7,9 +7,11 @@
 
 import { useState } from 'react';
 import { Briefcase, Users, Code } from 'lucide-react';
+import { useLanguage } from '@/lib/language';
 
 export default function PersonalizationSwitcher({ onChange }) {
     const [activeRole, setActiveRole] = useState('startup');
+    const { isRTL } = useLanguage();
 
     const roles = [
         {
@@ -59,8 +61,7 @@ export default function PersonalizationSwitcher({ onChange }) {
                         aria-pressed={isActive}
                     >
                         <Icon className="w-4 h-4" />
-                        <span className="hidden sm:inline">{role.label}</span>
-                        <span className="sm:hidden" lang="ar">{role.labelAr}</span>
+                        <span>{isRTL ? role.labelAr : role.label}</span>
                     </button>
                 );
             })}
