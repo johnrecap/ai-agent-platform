@@ -50,6 +50,16 @@ export default function LandingPage() {
   const [activeRole, setActiveRole] = useState('startup');
   const { reducedMotion } = useMotion();
   const { animationBudget } = usePerformance();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -147,8 +157,40 @@ export default function LandingPage() {
         <rect width="100%" height="100%" filter="url(#noise)" />
       </svg>
 
+      {/* Skip to Main Content - Accessibility */}
+      <a
+        href="#main-content"
+        className="skip-to-main"
+        style={{
+          position: 'absolute',
+          top: '-100px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: '#A855F7',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontWeight: 600,
+          zIndex: 10000,
+          transition: 'top 250ms ease-out',
+          textDecoration: 'none',
+        }}
+        onFocus={(e) => e.currentTarget.style.top = '16px'}
+        onBlur={(e) => e.currentTarget.style.top = '-100px'}
+      >
+        {isRTL ? 'انتقل إلى المحتوى الرئيسي' : 'Skip to main content'}
+      </a>
+
       {/* Navigation Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--role-border)] bg-[var(--role-surface)]/80 backdrop-blur-xl">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${isScrolled
+            ? 'border-[var(--role-border)] bg-[var(--role-surface)]/90 backdrop-blur-md shadow-lg'
+            : 'border-[var(--role-border)]/50 bg-[var(--role-surface)]/60 backdrop-blur-2xl'
+          }`}
+        style={{
+          boxShadow: isScrolled ? '0 4px 16px rgba(0, 0, 0, 0.1)' : 'none',
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 interactive">
             <div className="text-2xl">
@@ -196,7 +238,7 @@ export default function LandingPage() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-16">
+      <main className="pt-16" id="main-content">
         {/* Hero Section - Outcome First */}
         <section className="relative min-h-screen flex items-center justify-center px-4 py-20 brand-grid overflow-hidden">
           {/* Background Effects */}
