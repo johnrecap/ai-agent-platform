@@ -37,23 +37,29 @@ export default function ParticleSystem({ count: propCount }) {
 
         const ctx = canvas.getContext('2d');
 
-        // Set canvas size
+        // Set canvas size with DPI awareness but lower resolution for mobile
         const resizeCanvas = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const isMobile = window.innerWidth < 768;
+            const dpr = isMobile ? 1 : window.devicePixelRatio; // Force 1x on mobile for performance
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            // Scale context to ensure correct size
+            ctx.scale(dpr, dpr);
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
         };
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
         // Adjust particle count for mobile and performance
         const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? Math.min(baseCount, 5) : baseCount;
+        const particleCount = isMobile ? Math.min(baseCount, 8) : baseCount;
 
         // Initialize particles
         const colors = ['#8B5CF6', '#EC4899', '#06B6D4', '#A78BFA'];
         particlesRef.current = Array.from({ length: particleCount }, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
             size: Math.random() * 4 + 2,
             speedY: Math.random() * 0.5 + 0.2,
             speedX: (Math.random() - 0.5) * 0.3,
@@ -61,37 +67,49 @@ export default function ParticleSystem({ count: propCount }) {
             color: colors[Math.floor(Math.random() * colors.length)]
         }));
 
-        // Animation loop
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let lastTime = 0;
+        const targetFPS = isMobile ? 30 : 60; // Cap at 30fps strictly for mobile
+        const frameInterval = 1000 / targetFPS;
 
-            particlesRef.current.forEach(particle => {
-                // Update position
-                particle.y -= particle.speedY;
-                particle.x += particle.speedX;
+        // Animation loop with throttle
+        const animate = (timestamp) => {
+            if (!lastTime) lastTime = timestamp;
+            const deltaTime = timestamp - lastTime;
 
-                // Reset particle when it goes off screen
-                if (particle.y < -10) {
-                    particle.y = canvas.height + 10;
-                    particle.x = Math.random() * canvas.width;
-                }
-                if (particle.x < -10 || particle.x > canvas.width + 10) {
-                    particle.x = Math.random() * canvas.width;
-                }
+            if (deltaTime >= frameInterval) {
+                lastTime = timestamp - (deltaTime % frameInterval);
 
-                // Draw particle
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                ctx.fillStyle = particle.color;
-                ctx.globalAlpha = particle.opacity;
-                ctx.fill();
-            });
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-            ctx.globalAlpha = 1;
+                particlesRef.current.forEach(particle => {
+                    // Update position
+                    particle.y -= particle.speedY;
+                    particle.x += particle.speedX;
+
+                    // Reset particle when it goes off screen
+                    if (particle.y < -10) {
+                        particle.y = window.innerHeight + 10;
+                        particle.x = Math.random() * window.innerWidth;
+                    }
+                    if (particle.x < -10 || particle.x > window.innerWidth + 10) {
+                        particle.x = Math.random() * window.innerWidth;
+                    }
+
+                    // Draw particle
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.globalAlpha = particle.opacity;
+                    ctx.fill();
+                });
+
+                ctx.globalAlpha = 1;
+            }
+
             animationFrameRef.current = requestAnimationFrame(animate);
         };
 
-        animate();
+        requestAnimationFrame(animate);
 
         // Cleanup
         return () => {
