@@ -49,6 +49,7 @@ coverage/
 .eslintcache
 
 # Root directory files (exclude from git)
-PRODUCTION_ROADMAP.md
-PROJECT_DOCUMENTATION.md
-app Progress.md
+# TEMPORARILY COMMENTED OUT FOR UPDATES - RE-ADD AFTER PROJECT COMPLETION
+# PRODUCTION_ROADMAP.md
+# PROJECT_DOCUMENTATION.md
+# app Progress.md
