@@ -411,7 +411,7 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -450,7 +450,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 relative">
             {/* Connecting Line */}
             <div className="hidden md:block absolute top-24 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 opacity-20" style={{ width: '66%', left: '17%' }} />
 
@@ -493,7 +493,7 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
           {pricingTiers.map((tier, index) => (
             <div key={index} className="transform hover:scale-105 transition-transform duration-300">
               <PricingCard
@@ -532,8 +532,8 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Section with Particles */}
-      <section className="relative max-w-7xl mx-auto px-4 py-32">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-purple-500 to-pink-600 p-16 md:p-24 text-center shadow-2xl">
+      <section className="relative max-w-7xl mx-auto px-4 py-16 sm:py-24 lg:py-32">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-purple-600 via-purple-500 to-pink-600 p-8 sm:p-12 md:p-16 lg:p-24 text-center shadow-2xl">
           {/* Animated Background */}
           <div className="absolute inset-0">
             {ctaParticles.map((particle) => (
@@ -551,10 +551,10 @@ export default function LandingPage() {
           </div>
 
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6">
               {isRTL ? 'هل أنت مستعد للبدء؟' : 'Ready to Get Started?'}
             </h2>
-            <p className="text-white/90 text-xl md:text-2xl mb-10 max-w-2xl mx-auto">
+            <p className="text-white/90 text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-10 max-w-2xl mx-auto px-4">
               {isRTL
                 ? 'انضم إلى آلاف الشركات التي تستخدم منصتنا لتحسين خدمة العملاء'
                 : 'Join thousands of businesses using our platform to improve customer service'
@@ -562,7 +562,7 @@ export default function LandingPage() {
             </p>
             <Link
               href="/login"
-              className="inline-flex items-center gap-3 px-12 py-5 bg-white text-purple-600 rounded-2xl font-bold text-lg hover:scale-110 hover:shadow-2xl transition-all duration-300"
+              className="inline-flex items-center gap-2 sm:gap-3 px-8 sm:px-10 lg:px-12 py-4 lg:py-5 bg-white text-purple-600 rounded-xl sm:rounded-2xl font-bold text-base lg:text-lg hover:scale-110 hover:shadow-2xl transition-all duration-300"
             >
               🚀 {isRTL ? 'ابدأ مجاناً الآن' : 'Start Free Now'}
             </Link>
@@ -571,9 +571,9 @@ export default function LandingPage() {
       </section>
 
       {/* Enhanced Footer */}
-      <footer className="border-t border-[var(--border-primary)] bg-[var(--bg-secondary)] py-16">
+      <footer className="border-t border-[var(--border-primary)] bg-[var(--bg-secondary)] py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-12">
             {/* Brand Column */}
             <div>
               <div className="flex items-center gap-3 mb-6">
