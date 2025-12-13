@@ -10,10 +10,14 @@ export const metadata = {
   description: 'Turn customer support into autopilot in 10 minutes. AI platform that cuts 80% of repetitive inquiries.',
 };
 
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={inter.className}>
         <LanguageProvider>
           <ThemeProvider>
             <MotionProvider>
