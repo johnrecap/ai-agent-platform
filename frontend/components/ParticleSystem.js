@@ -100,7 +100,7 @@ export default function ParticleSystem({ count: propCount }) {
                 cancelAnimationFrame(animationFrameRef.current);
             }
         };
-    }, [count]);
+    }, [baseCount, animationBudget]);
 
     return (
         <canvas
