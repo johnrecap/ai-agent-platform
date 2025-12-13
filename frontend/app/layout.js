@@ -16,8 +16,31 @@ const cairo = Cairo({
 });
 
 export const metadata = {
-  title: "AI Agent Platform",
+  title: {
+    default: "AI Agent Platform",
+    template: "%s | AI Agent Platform"
+  },
   description: "AI Agent Hosting Platform - Manage and track conversations with AI agents",
+  keywords: ["AI", "Chatbot", "Agent", "Hosting", "Platform", "Dify"],
+  authors: [{ name: "Muhammad Saeed" }],
+  creator: "Muhammad Saeed",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://ai-agent-platform-three.vercel.app",
+    title: "AI Agent Platform",
+    description: "AI Agent Hosting Platform - Manage and track conversations with AI agents",
+    siteName: "AI Agent Platform",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+  },
 };
 
 export default function RootLayout({ children }) {

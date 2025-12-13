@@ -44,7 +44,7 @@ export function WebSocketProvider({ children, url }) {
             ws.onopen = () => {
                 setConnectionState(ConnectionState.CONNECTED);
                 reconnectAttemptsRef.current = 0;
-                console.log('[WS] Connected');
+                if (process.env.NODE_ENV === 'development') console.log('[WS] Connected');
             };
 
             ws.onmessage = (event) => {
@@ -63,7 +63,7 @@ export function WebSocketProvider({ children, url }) {
 
             ws.onclose = () => {
                 setConnectionState(ConnectionState.DISCONNECTED);
-                console.log('[WS] Disconnected');
+                if (process.env.NODE_ENV === 'development') console.log('[WS] Disconnected');
                 attemptReconnect();
             };
 
@@ -78,7 +78,7 @@ export function WebSocketProvider({ children, url }) {
 
     const attemptReconnect = useCallback(() => {
         if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) {
-            console.log('[WS] Max reconnect attempts reached');
+            if (process.env.NODE_ENV === 'development') console.log('[WS] Max reconnect attempts reached');
             return;
         }
 
@@ -86,7 +86,7 @@ export function WebSocketProvider({ children, url }) {
         reconnectAttemptsRef.current++;
 
         reconnectTimeoutRef.current = setTimeout(() => {
-            console.log(`[WS] Reconnecting... (${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`);
+            if (process.env.NODE_ENV === 'development') console.log(`[WS] Reconnecting... (${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`);
             connect();
         }, RECONNECT_DELAY);
     }, [connect]);

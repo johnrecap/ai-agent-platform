@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 
 // Import configuration
 const config = require('./config/config');
@@ -36,6 +37,18 @@ const app = express();
 // ==========================================
 // Middleware Configuration
 // ==========================================
+
+// Compression middleware for gzip/deflate (should be early in middleware stack)
+app.use(compression({
+    // Only compress responses above 1kb
+    threshold: 1024,
+    filter: (req, res) => {
+        if (req.headers['x-no-compression']) {
+            return false;
+        }
+        return compression.filter(req, res);
+    }
+}));
 
 // CORS configuration
 app.use(cors({

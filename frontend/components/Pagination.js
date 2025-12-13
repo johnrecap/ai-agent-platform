@@ -5,7 +5,9 @@
  * AI Agent Hosting Platform
  */
 
-export default function Pagination({
+import { memo } from 'react';
+
+const Pagination = memo(function Pagination({
     currentPage,
     totalPages,
     onPageChange,
@@ -41,8 +43,8 @@ export default function Pagination({
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${currentPage === 1
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
                         }`}
                 >
                     ← Prev
@@ -67,8 +69,8 @@ export default function Pagination({
                         key={page}
                         onClick={() => onPageChange(page)}
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${page === currentPage
-                                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
                             }`}
                     >
                         {page}
@@ -93,8 +95,8 @@ export default function Pagination({
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${currentPage === totalPages
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
                         }`}
                 >
                     Next →
@@ -102,4 +104,6 @@ export default function Pagination({
             </div>
         </div>
     );
-}
+});
+
+export default Pagination;

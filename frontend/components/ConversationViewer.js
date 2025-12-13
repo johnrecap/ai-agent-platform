@@ -2,12 +2,13 @@
 
 /**
  * Conversation Viewer Component
- * AI Agent Hosting Platform
- * 
- * Beautiful chat bubble interface for displaying conversations
+ * AI Agent Platform - Premium 2026 Design
  */
 
-export default function ConversationViewer({ conversation }) {
+import { useState } from 'react';
+import { memo } from 'react';
+
+const ConversationViewer = memo(function ConversationViewer({ conversation, onClose }) {
     if (!conversation || !conversation.messages || conversation.messages.length === 0) {
         return (
             <div className="text-center py-12 text-gray-500">
@@ -78,4 +79,6 @@ export default function ConversationViewer({ conversation }) {
             </div>
         </div>
     );
-}
+});
+
+export default ConversationViewer;

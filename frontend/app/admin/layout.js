@@ -5,13 +5,26 @@
  * AI Agent Platform - Premium 2026 Design
  */
 
+import dynamic from 'next/dynamic';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import AdminSidebar from '@/components/AdminSidebar';
-import CommandPalette from '@/components/CommandPalette';
-import ChatbotWidget from '@/components/ChatbotWidget';
-import { NotificationProvider, NotificationBell, NotificationPanel } from '@/components/NotificationCenter';
 import { useLanguage } from '@/lib/language';
 import { useEffect, useState } from 'react';
+
+// Dynamic imports for heavy components (code splitting)
+const AdminSidebar = dynamic(() => import('@/components/AdminSidebar'), {
+    loading: () => <div className="w-64 h-screen bg-[var(--bg-secondary)] animate-pulse" />,
+    ssr: true,
+});
+
+const CommandPalette = dynamic(() => import('@/components/CommandPalette'), {
+    ssr: false,
+});
+
+const ChatbotWidget = dynamic(() => import('@/components/ChatbotWidget'), {
+    ssr: false,
+});
+
+const { NotificationProvider, NotificationBell, NotificationPanel } = await import('@/components/NotificationCenter');
 
 export default function AdminLayout({ children }) {
     const { isRTL, t } = useLanguage();
