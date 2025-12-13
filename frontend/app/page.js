@@ -286,12 +286,12 @@ export default function LandingPage() {
           {/* Content */}
           <div className="relative z-10 max-w-5xl mx-auto text-center">
             {/* Personalization Switcher */}
-            <div className="mb-8 flex justify-center">
+            <div className="mb-12 flex justify-center">
               <PersonalizationSwitcher onChange={setActiveRole} />
             </div>
 
-            {/* Headline - Fixed overlap issue */}
-            <div ref={headlineRef} className="relative z-20 mb-16 pb-8 overflow-hidden">
+            {/* Headline - Fixed overlap issue with more spacing */}
+            <div ref={headlineRef} className="relative z-20 mt-4 mb-16 pb-8 overflow-visible">
               <div className="max-w-4xl mx-auto">
                 <h1 className="text-h1 mb-0 leading-tight">
                   <TypingText
