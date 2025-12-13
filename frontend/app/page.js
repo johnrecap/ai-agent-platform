@@ -22,6 +22,9 @@ import ThemeToggle from '@/components/ThemeToggle';
 import TrustStrip from '@/components/TrustStrip';
 import PersonalizationSwitcher from '@/components/PersonalizationSwitcher';
 import FloatingChatbot from '@/components/FloatingChatbot';
+import ParticleSystem from '@/components/ParticleSystem';
+import MorphingBlob from '@/components/MorphingBlob';
+import ParallaxOrbs from '@/components/ParallaxOrbs';
 
 // Modern icons from Lucide
 import {
@@ -163,6 +166,11 @@ export default function LandingPage() {
       <main className="pt-16">
         {/* Hero Section - Outcome First */}
         <section className="relative min-h-screen flex items-center justify-center px-4 py-20 brand-grid overflow-hidden">
+          {/* Background Effects */}
+          <ParticleSystem count={30} />
+          <MorphingBlob />
+          <ParallaxOrbs />
+
           {/* Content */}
           <div className="relative z-10 max-w-5xl mx-auto text-center">
             {/* Personalization Switcher */}
