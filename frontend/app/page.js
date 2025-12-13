@@ -34,6 +34,9 @@ import BentoGrid from '@/components/BentoGrid';
 import MeshGradient from '@/components/MeshGradient';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import ScrollProgressBar from '@/components/ScrollProgressBar';
+import FAQAccordion from '@/components/FAQAccordion';
+import LogoShowcase from '@/components/LogoShowcase';
+import Timeline from '@/components/Timeline';
 
 // Modern icons from Lucide
 import {
@@ -184,8 +187,8 @@ export default function LandingPage() {
       {/* Navigation Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${isScrolled
-            ? 'border-[var(--role-border)] bg-[var(--role-surface)]/90 backdrop-blur-md shadow-lg'
-            : 'border-[var(--role-border)]/50 bg-[var(--role-surface)]/60 backdrop-blur-2xl'
+          ? 'border-[var(--role-border)] bg-[var(--role-surface)]/90 backdrop-blur-md shadow-lg'
+          : 'border-[var(--role-border)]/50 bg-[var(--role-surface)]/60 backdrop-blur-2xl'
           }`}
         style={{
           boxShadow: isScrolled ? '0 4px 16px rgba(0, 0, 0, 0.1)' : 'none',
@@ -365,6 +368,82 @@ export default function LandingPage() {
 
         {/* Bento Grid Features */}
         <BentoGrid isRTL={isRTL} />
+
+        {/* How It Works - Timeline */}
+        <ScrollReveal direction="up">
+          <section className="max-w-7xl mx-auto px-4 py-24">
+            <div className="text-center mb-16">
+              <h2 className="text-h2 mb-4">
+                {isRTL ? 'كيف يعمل' : 'How It Works'}
+              </h2>
+              <p className="text-body text-[var(--role-text-secondary)] max-w-2xl mx-auto">
+                {isRTL
+                  ? 'ثلاث خطوات بسيطة للبدء مع منصتنا'
+                  : 'Three simple steps to get started with our platform'
+                }
+              </p>
+            </div>
+            <Timeline isRTL={isRTL} />
+          </section>
+        </ScrollReveal>
+
+        {/* Logo Showcase */}
+        <ScrollReveal direction="up">
+          <section className="py-24 bg-[var(--role-surface)]">
+            <LogoShowcase isRTL={isRTL} />
+          </section>
+        </ScrollReveal>
+
+        {/* FAQ Section */}
+        <ScrollReveal direction="up">
+          <section className="max-w-7xl mx-auto px-4 py-24">
+            <div className="text-center mb-16">
+              <h2 className="text-h2 mb-4">
+                {isRTL ? 'الأسئلة الشائعة' : 'Frequently Asked Questions'}
+              </h2>
+              <p className="text-body text-[var(--role-text-secondary)] max-w-2xl mx-auto">
+                {isRTL
+                  ? 'إج��بات على الأسئلة الأكثر شيوعاً حول منصتنا'
+                  : 'Answers to the most common questions about our platform'
+                }
+              </p>
+            </div>
+            <FAQAccordion
+              items={[
+                {
+                  question: isRTL ? 'ما هي منصة AI Agent Platform؟' : 'What is AI Agent Platform?',
+                  answer: isRTL
+                    ? 'منصة شاملة لإنشاء وإدارة روبوتات الدردشة المدعومة بالذكاء الاصطناعي. نوفر لك كل الأدوات اللازمة لبناء وكلاء AI مخصصين يتفاعلون مع عملائك بشكل طبيعي وفعال على مدار الساعة.'
+                    : 'A comprehensive platform for creating and managing AI-powered chatbots. We provide all the tools you need to build custom AI agents that interact with your customers naturally and effectively 24/7.',
+                },
+                {
+                  question: isRTL ? 'كم من الوقت يستغرق الإعداد؟' : 'How long does setup take?',
+                  answer: isRTL
+                    ? 'يمكنك إطلاق أول وكيل AI الخاص بك في أقل من 10 دقائق. فقط قم بالتسجيل، أضف معلومات عملك، وانسخ كود التضمين إلى موقعك. لا حاجة لمهارات برمجية متقدمة.'
+                    : 'You can launch your first AI agent in under 10 minutes. Simply sign up, add your business information, and copy the embed code to your website. No advanced coding skills required.',
+                },
+                {
+                  question: isRTL ? 'هل يدعم النظام اللغة العربية؟' : 'Does the system support Arabic?',
+                  answer: isRTL
+                    ? 'نعم! نحن ندعم أكثر من 12 لغة بما في ذلك العربية والإنجليزية. يمكن لوكيل الـ AI الخاص بك التواصل بلغات متعددة وفهم السياق في كل لغة بشكل صحيح.'
+                    : 'Yes! We support over 12 languages including Arabic and English. Your AI agent can communicate in multiple languages and understand context correctly in each language.',
+                },
+                {
+                  question: isRTL ? 'ما هي خطط الأسعار المتاحة؟' : 'What pricing plans are available?',
+                  answer: isRTL
+                    ? 'نقدم ثلاث خطط: Free (للبدء)، Pro (للشركات النامية)، و Enterprise (للمؤسسات الكبيرة). كل خطة تأتي مع ميزات مختلفة وحدود استخدام. يمكنك البدء مجاناً وترقية خطتك في أي وقت.'
+                    : 'We offer three plans: Free (for getting started), Pro (for growing businesses), and Enterprise (for large organizations). Each plan comes with different features and usage limits. You can start for free and upgrade anytime.',
+                },
+                {
+                  question: isRTL ? 'هل يمكنني تخصيص شكل الـ chatbot؟' : 'Can I customize the chatbot appearance?',
+                  answer: isRTL
+                    ? 'بالتأكيد! يمكنك تخصيص الألوان، الأيقونات، الرسائل الترحيبية، وموضع الظهور. نوفر أيضاً إمكانية رفع شعارك الخاص وتخصيص كامل للواجهة لتتناسب مع هوية علامتك التجارية.'
+                    : 'Absolutely! You can customize colors, icons, welcome messages, and display position. We also provide the ability to upload your own logo and fully customize the interface to match your brand identity.',
+                },
+              ]}
+            />
+          </section>
+        </ScrollReveal>
 
         {/* Final CTA */}
         <ScrollReveal direction="up">
