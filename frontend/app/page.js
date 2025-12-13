@@ -266,13 +266,15 @@ export default function LandingPage() {
             </div>
 
             {/* Headline */}
-            <h1 ref={headlineRef} className="text-h1 mb-6">
-              <TypingText
-                text={content.headline}
-                speed={50}
-                className="bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent"
-              />
-            </h1>
+            <div ref={headlineRef} className="relative z-10 mb-6">
+              <h1 className="text-h1">
+                <TypingText
+                  text={content.headline}
+                  speed={50}
+                  className="bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent"
+                />
+              </h1>
+            </div>
 
             {/* Subheadline */}
             <p ref={subheadRef} className="text-h3 text-[var(--role-text-secondary)] mb-12 max-w-3xl mx-auto font-normal">

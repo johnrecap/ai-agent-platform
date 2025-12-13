@@ -1,6 +1,6 @@
 import { MotionProvider } from '@/lib/MotionContext';
 import { PerformanceProvider } from '@/lib/PerformanceContext';
-import PageTransition from '@/components/PageTransition';
+import { ThemeProvider } from '@/lib/ThemeContext';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
 import './globals.css';
 
@@ -13,14 +13,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <MotionProvider>
-          <PerformanceProvider>
-            <PerformanceMonitor />
-            <PageTransition>
+        <ThemeProvider>
+          <MotionProvider>
+            <PerformanceProvider>
+              <PerformanceMonitor />
               {children}
-            </PageTransition>
-          </PerformanceProvider>
-        </MotionProvider>
+            </PerformanceProvider>
+          </MotionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
