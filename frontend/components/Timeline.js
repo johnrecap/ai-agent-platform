@@ -57,7 +57,7 @@ export default function Timeline({ isRTL }) {
                             )}
 
                             {/* Step Card */}
-                            <div className="relative z-10 p-6rounded-2xl bg-[var(--role-surface)] border border-[var(--role-border)] hover:border-[var(--role-accent)] transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_24px_48px_rgba(168,85,247,0.3)] group">
+                            <div className="relative z-10 p-6 rounded-2xl bg-[var(--role-surface)] border border-[var(--role-border)] hover:border-[var(--role-accent)] transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_24px_48px_rgba(168,85,247,0.3)] group">
                                 {/* Step Number */}
                                 <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl mb-4 group-hover:scale-125 transition-transform duration-300 shadow-[0_0_24px_rgba(168,85,247,0.8)]">
                                     {step.number}
