@@ -7,6 +7,7 @@
 
 import dynamic from 'next/dynamic';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import ThemeToggle from '@/components/ThemeToggle';
 import { useLanguage } from '@/lib/language';
 import { useEffect, useState } from 'react';
 
@@ -62,6 +63,7 @@ export default function AdminLayout({ children }) {
                             <span>{t('common.search')}...</span>
                             <kbd className="px-1.5 py-0.5 bg-[var(--bg-card)] rounded text-xs">⌘K</kbd>
                         </button>
+                        <ThemeToggle size="md" />
                         <NotificationBell />
                     </div>
 

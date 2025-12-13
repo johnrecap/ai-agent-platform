@@ -11,6 +11,8 @@ import { useLanguage } from '@/lib/language';
 import toast from 'react-hot-toast';
 import { GlassCard, GradientButton, Skeleton, EmptyState, StatusBadge, IconButton } from '@/components/ui';
 import EmbedCodeGenerator from '@/components/EmbedCodeGenerator';
+import AvatarUpload from '@/components/AvatarUpload';
+import Image from 'next/image';
 
 export default function AgentsPage() {
     const { t, isRTL, language } = useLanguage();
@@ -161,8 +163,12 @@ export default function AgentsPage() {
                         >
                             {/* Header */}
                             <div className="flex items-start justify-between mb-4">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-3xl text-white group-hover:scale-110 transition-transform">
-                                    🤖
+                                <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-3xl text-white group-hover:scale-110 transition-transform">
+                                    {agent.avatar_url ? (
+                                        <Image src={agent.avatar_url} alt={agent.agent_name} width={56} height={56} className="object-cover" />
+                                    ) : (
+                                        '🤖'
+                                    )}
                                 </div>
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <IconButton
@@ -231,6 +237,23 @@ export default function AgentsPage() {
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Avatar Upload - only show for editing */}
+                            {editingAgent && (
+                                <div>
+                                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                                        Avatar/Logo
+                                    </label>
+                                    <AvatarUpload
+                                        agentId={editingAgent.id}
+                                        currentAvatar={editingAgent.avatar_url}
+                                        onUploadSuccess={(data) => {
+                                            setEditingAgent({ ...editingAgent, avatar_url: data.avatar_url });
+                                            loadAgents(); // Refresh list
+                                        }}
+                                    />
+                                </div>
+                            )}
+
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                                     {txt.agentName} *

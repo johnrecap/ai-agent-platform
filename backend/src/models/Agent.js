@@ -66,6 +66,21 @@ const Agent = sequelize.define('Agent', {
         type: DataTypes.STRING(255),
         allowNull: true,
         comment: 'Dify Backend Service API key for this agent'
+    },
+    avatar_url: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
+        comment: 'Cloudinary URL for agent avatar/logo'
+    },
+    avatar_public_id: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Cloudinary public ID for avatar management'
+    },
+    avatar_updated_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment: 'Timestamp of last avatar update'
     }
 }, {
     tableName: 'agents',

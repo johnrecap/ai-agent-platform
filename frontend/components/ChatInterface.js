@@ -8,8 +8,9 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 
-export default function ChatInterface({ agentId, agentName }) {
+export default function ChatInterface({ agentId, agentName, avatarUrl }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -102,8 +103,12 @@ export default function ChatInterface({ agentId, agentName }) {
             {/* Header */}
             <div className="flex items-center gap-4 p-5 border-b border-white/10 bg-white/5 backdrop-blur-xl">
                 <div className="relative">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg shadow-purple-500/30">
-                        🤖
+                    <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl shadow-lg shadow-purple-500/30">
+                        {avatarUrl ? (
+                            <Image src={avatarUrl} alt={agentName || 'Agent'} width={48} height={48} className="object-cover" />
+                        ) : (
+                            '🤖'
+                        )}
                     </div>
                     <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#1a1a2e] animate-pulse" />
                 </div>
@@ -199,7 +204,14 @@ export default function ChatInterface({ agentId, agentName }) {
                     </button>
                 </div>
                 <p className="text-xs text-center text-gray-500 mt-3">
-                    developed by Muhammed Saeed
+                    <a
+                        href="/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-purple-400 transition-colors"
+                    >
+                        Developed by Muhammad Saeed
+                    </a>
                 </p>
             </form>
         </div>

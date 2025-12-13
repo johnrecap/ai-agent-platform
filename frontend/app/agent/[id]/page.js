@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ChatInterface from '@/components/ChatInterface';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import ThemeToggle from '@/components/ThemeToggle';
+import Image from 'next/image';
 
 export default function AgentPage() {
     const params = useParams();
@@ -96,7 +98,7 @@ export default function AgentPage() {
                     <h1 className="text-xl font-bold text-white">
                         {agent.page_title || agent.agent_name}
                     </h1>
-                    <div className="w-20" /> {/* Spacer */}
+                    <ThemeToggle size="sm" />
                 </div>
             </header>
 
@@ -105,12 +107,20 @@ export default function AgentPage() {
                 <ChatInterface
                     agentId={agent.id}
                     agentName={agent.agent_name}
+                    avatarUrl={agent.avatar_url}
                 />
             </main>
 
             {/* Footer */}
-            <footer className="relative z-10 text-center py-4 text-gray-500 text-sm">
-                Powered by AI Agent Platform
+            <footer className="relative z-10 text-center py-4 text-sm">
+                <a
+                    href="/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-purple-400 transition-colors"
+                >
+                    Developed by Muhammad Saeed
+                </a>
             </footer>
         </div>
     );

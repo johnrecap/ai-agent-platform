@@ -6,12 +6,15 @@
  */
 
 import { LanguageProvider, LanguageSelector } from '@/lib/language';
+import { ThemeProvider } from '@/lib/ThemeContext';
 
 export default function ClientProviders({ children }) {
     return (
-        <LanguageProvider>
-            {children}
-            <LanguageSelector />
-        </LanguageProvider>
+        <ThemeProvider>
+            <LanguageProvider>
+                {children}
+                <LanguageSelector />
+            </LanguageProvider>
+        </ThemeProvider>
     );
 }

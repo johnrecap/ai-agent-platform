@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { login, isLoggedIn, isAdmin } from '@/lib/auth';
 import { useLanguage } from '@/lib/language';
 import { GradientButton, Spinner } from '@/components/ui';
+import ThemeToggle from '@/components/ThemeToggle';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -105,8 +106,9 @@ export default function LoginPage() {
             {/* Right Side - Login Form */}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
                 <div className="w-full max-w-md animate-fadeIn">
-                    {/* Language Toggle */}
-                    <div className="flex justify-end mb-4">
+                    {/* Theme & Language Toggles */}
+                    <div className="flex justify-end gap-2 mb-4">
+                        <ThemeToggle size="md" />
                         <button
                             onClick={toggleLanguage}
                             className="px-3 py-1.5 text-sm bg-[var(--bg-tertiary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"

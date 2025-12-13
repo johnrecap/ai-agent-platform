@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { GlassCard, GradientButton, IconButton } from '@/components/ui';
 import EmbedCodeGenerator from '@/components/EmbedCodeGenerator';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -97,6 +98,7 @@ export default function ProfilePage() {
                         <span className="font-bold text-[var(--text-primary)]">{t('nav.aiAgentPlatform')}</span>
                     </Link>
                     <div className="flex items-center gap-4">
+                        <ThemeToggle size="md" />
                         <button
                             onClick={toggleLanguage}
                             className="px-3 py-1.5 text-sm bg-[var(--bg-tertiary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"

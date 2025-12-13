@@ -45,11 +45,24 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Prevent FOUC - Set theme before React hydrates */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              try {
+                const theme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+              } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+              }
+            })();
+          `
+        }} />
       </head>
       <body className={`${inter.variable} ${cairo.variable} font-sans antialiased`}>
         <ClientProviders>

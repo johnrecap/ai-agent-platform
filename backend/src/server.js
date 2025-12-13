@@ -27,6 +27,7 @@ const conversationRoutes = require('./routes/conversations');
 const difyRoutes = require('./routes/dify');
 const chatRoutes = require('./routes/chat');
 const userAgentRoutes = require('./routes/userAgents');
+const avatarRoutes = require('./routes/avatarRoutes');
 
 // Import logger
 const logger = require('./utils/logger');
@@ -96,6 +97,7 @@ app.use('/api/conversations', conversationRoutes);
 app.use('/api/dify', difyRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/user-agents', userAgentRoutes);
+app.use('/api', avatarRoutes); // Avatar upload routes
 
 // ==========================================
 // Error Handling
