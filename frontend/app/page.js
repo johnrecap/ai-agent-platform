@@ -14,6 +14,7 @@ import { useEffect, useState, useRef } from 'react';
 import { isLoggedIn, isAdmin, logout, getUser } from '@/lib/auth';
 import { useLanguage } from '@/lib/language';
 import Link from 'next/link';
+import ThemeToggle from '@/components/ThemeToggle';
 import LandingFeatureCard from '@/components/LandingFeatureCard';
 import PricingCard from '@/components/PricingCard';
 import FAQAccordion from '@/components/FAQAccordion';
@@ -21,17 +22,34 @@ import FloatingChatbot from '@/components/FloatingChatbot';
 
 export default function LandingPage() {
   const { t, isRTL, language, setLanguage } = useLanguage();
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [userIsAdmin, setUserIsAdmin] = useState(false);
-  const [user, setUser] = useState(null);
+  const [loggedIn] = useState(() => isLoggedIn());
+  const [userIsAdmin] = useState(() => isAdmin());
+  const [user] = useState(() => getUser());
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroRef = useRef(null);
 
-  useEffect(() => {
-    setLoggedIn(isLoggedIn());
-    setUserIsAdmin(isAdmin());
-    setUser(getUser());
+  // Generate particles once using lazy initializer (React-recommended pattern)
+  const [heroParticles] = useState(() =>
+    Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 5 + Math.random() * 10,
+    }))
+  );
 
+  const [ctaParticles] = useState(() =>
+    Array.from({ length: 30 }, (_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 3 + Math.random() * 4,
+    }))
+  );
+
+  useEffect(() => {
     // Mouse tracking for parallax effect
     const handleMouseMove = (e) => {
       setMousePosition({
@@ -46,9 +64,7 @@ export default function LandingPage() {
 
   const handleLogout = () => {
     logout();
-    setLoggedIn(false);
-    setUserIsAdmin(false);
-    setUser(null);
+    window.location.reload(); // Refresh to update auth state
   };
 
   const toggleLanguage = () => {
@@ -233,6 +249,9 @@ export default function LandingPage() {
           </Link>
 
           <div className="flex items-center gap-4">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
@@ -288,15 +307,15 @@ export default function LandingPage() {
 
         {/* Particles */}
         <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
+          {heroParticles.map((particle) => (
             <div
-              key={i}
+              key={particle.id}
               className="absolute w-1 h-1 bg-purple-400 rounded-full animate-particle"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${5 + Math.random() * 10}s`,
+                left: `${particle.left}%`,
+                top: `${particle.top}%`,
+                animationDelay: `${particle.delay}s`,
+                animationDuration: `${particle.duration}s`,
               }}
             />
           ))}
@@ -348,7 +367,7 @@ export default function LandingPage() {
           </div>
 
           {/* 3D Stats Cards */}
-          <div className="flex justify-center gap-8flex-wrap animate-reveal" style={{ animationDelay: '0.8s' }}>
+          <div className="flex justify-center gap-8 flex-wrap animate-reveal" style={{ animationDelay: '0.8s' }}>
             {[
               { icon: '⚡', label: isRTL ? 'استجابة فورية' : 'Instant Response' },
               { icon: '🔒', label: isRTL ? 'آمن 100%' : '100% Secure' },
@@ -517,15 +536,15 @@ export default function LandingPage() {
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-purple-500 to-pink-600 p-16 md:p-24 text-center shadow-2xl">
           {/* Animated Background */}
           <div className="absolute inset-0">
-            {[...Array(30)].map((_, i) => (
+            {ctaParticles.map((particle) => (
               <div
-                key={i}
+                key={particle.id}
                 className="absolute w-2 h-2 bg-white rounded-full opacity-20 animate-float-random"
                 style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 5}s`,
-                  animationDuration: `${3 + Math.random() * 4}s`,
+                  left: `${particle.left}%`,
+                  top: `${particle.top}%`,
+                  animationDelay: `${particle.delay}s`,
+                  animationDuration: `${particle.duration}s`,
                 }}
               />
             ))}
