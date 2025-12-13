@@ -1,6 +1,7 @@
 import { MotionProvider } from '@/lib/MotionContext';
 import { PerformanceProvider } from '@/lib/PerformanceContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
+import { LanguageProvider } from '@/lib/language';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
 import './globals.css';
 
@@ -13,14 +14,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider>
-          <MotionProvider>
-            <PerformanceProvider>
-              <PerformanceMonitor />
-              {children}
-            </PerformanceProvider>
-          </MotionProvider>
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <MotionProvider>
+              <PerformanceProvider>
+                <PerformanceMonitor />
+                {children}
+              </PerformanceProvider>
+            </MotionProvider>
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
