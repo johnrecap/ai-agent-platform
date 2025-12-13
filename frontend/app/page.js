@@ -279,9 +279,7 @@ export default function LandingPage() {
         <section className="relative min-h-screen flex items-center justify-center px-4 py-20 brand-grid overflow-hidden">
           {/* Background Effects - Now with lazy loading for better performance */}
           <ParticleSystem />
-          <MorphingBlob />
           <ParallaxOrbs />
-          <MeshGradient />
 
           {/* Content */}
           <div className="relative z-10 max-w-5xl mx-auto text-center">
