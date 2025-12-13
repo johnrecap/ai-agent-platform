@@ -283,11 +283,11 @@ exports.getTrash = async (req, res, next) => {
 };
 
 module.exports = {
-    softDelete,
-    bulkSoftDelete,
-    restore,
-    bulkRestore,
-    permanentDelete,
-    emptyTrash,
-    getTrash
+    softDelete: exports.softDelete,
+    bulkSoftDelete: exports.bulkSoftDelete,
+    restore: exports.restore,
+    bulkRestore: exports.bulkRestore,
+    permanentDelete: exports.permanentDelete,
+    emptyTrash: exports.emptyTrash,
+    getTrash: exports.getTrash
 };
