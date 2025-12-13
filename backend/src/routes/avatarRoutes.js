@@ -7,18 +7,18 @@ const express = require('express');
 const router = express.Router();
 const avatarController = require('../controllers/avatarController');
 const upload = require('../middleware/uploadMiddleware');
-const { authenticateToken } = require('../middleware/auth');
+const auth = require('../middleware/auth');
 
 // Upload/Update avatar
 router.post('/agents/:id/avatar',
-    authenticateToken,
+    auth,
     upload.single('avatar'),
     avatarController.uploadAvatar
 );
 
 // Delete avatar
 router.delete('/agents/:id/avatar',
-    authenticateToken,
+    auth,
     avatarController.deleteAvatar
 );
 
