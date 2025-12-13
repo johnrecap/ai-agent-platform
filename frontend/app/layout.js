@@ -1,5 +1,7 @@
 import { MotionProvider } from '@/lib/MotionContext';
 import { PerformanceProvider } from '@/lib/PerformanceContext';
+import PageTransition from '@/components/PageTransition';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
 import './globals.css';
 
 export const metadata = {
@@ -13,7 +15,10 @@ export default function RootLayout({ children }) {
       <body>
         <MotionProvider>
           <PerformanceProvider>
-            {children}
+            <PerformanceMonitor />
+            <PageTransition>
+              {children}
+            </PageTransition>
           </PerformanceProvider>
         </MotionProvider>
       </body>

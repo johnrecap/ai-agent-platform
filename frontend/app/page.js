@@ -17,6 +17,7 @@ import { isLoggedIn, isAdmin, logout, getUser } from '@/lib/auth';
 import { useLanguage } from '@/lib/language';
 import { useMotion } from '@/lib/MotionContext';
 import { usePerformance } from '@/lib/PerformanceContext';
+import useParallax from '@/hooks/useParallax';
 import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
 import TrustStrip from '@/components/TrustStrip';
@@ -54,6 +55,11 @@ export default function LandingPage() {
   const { reducedMotion } = useMotion();
   const { animationBudget } = usePerformance();
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Parallax refs for hero elements
+  const headlineRef = useParallax(0.2);
+  const subheadRef = useParallax(0.15);
+  const ctaRef = useParallax(0.1);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -244,11 +250,13 @@ export default function LandingPage() {
       <main className="pt-16" id="main-content">
         {/* Hero Section - Outcome First */}
         <section className="relative min-h-screen flex items-center justify-center px-4 py-20 brand-grid overflow-hidden">
-          {/* Background Effects */}
-          <ParticleSystem count={30} />
+          {/* Background Effects - OPTIMIZED FOR PERFORMANCE */}
+          <ParticleSystem count={8} />{/* Reduced from 30 */}
+          {/* TEMPORARILY DISABLED FOR PERFORMANCE - TODO: Re-enable with lazy loading
           <MorphingBlob />
           <ParallaxOrbs />
           <MeshGradient />
+          */}
 
           {/* Content */}
           <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -258,7 +266,7 @@ export default function LandingPage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-h1 mb-6">
+            <h1 ref={headlineRef} className="text-h1 mb-6">
               <TypingText
                 text={content.headline}
                 speed={50}
@@ -267,20 +275,22 @@ export default function LandingPage() {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-h3 text-[var(--role-text-secondary)] mb-12 max-w-3xl mx-auto font-normal">
+            <p ref={subheadRef} className="text-h3 text-[var(--role-text-secondary)] mb-12 max-w-3xl mx-auto font-normal">
               {content.subhead}
             </p>
 
             {/* CTA Button */}
-            <MagneticButton
-              href="/login"
-              shimmer={true}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-lg shadow-[var(--elevation-4)] hover:shadow-[var(--elevation-5)] group"
-            >
-              <Sparkles className="w-5 h-5" />
-              {content.cta}
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-[var(--motion-micro-duration)]" />
-            </MagneticButton>
+            <div ref={ctaRef}>
+              <MagneticButton
+                href="/login"
+                shimmer={true}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-lg shadow-[var(--elevation-4)] hover:shadow-[var(--elevation-5)] group"
+              >
+                <Sparkles className="w-5 h-5" />
+                {content.cta}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-[var(--motion-micro-duration)]" />
+              </MagneticButton>
+            </div>
 
             {/* Trust Strip */}
             <div className="mt-16">

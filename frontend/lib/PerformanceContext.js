@@ -3,33 +3,52 @@
 /**
  * Performance Monitor
  * Adapts animation budget based on device capability
+ * Features:
+ * - Device tier detection (high/medium/low)
+ * - Particle count adjustment
+ * - Tab visibility handling
+ * - Animation budget system
  */
 
 import { createContext, useContext, useState, useEffect } from 'react';
 
 const PerformanceContext = createContext({
     animationBudget: 'full', // 'full' | 'reduced' | 'none'
+    deviceTier: 'high', // 'high' | 'medium' | 'low'
+    particleCount: 30,
 });
 
 export function PerformanceProvider({ children }) {
     const [animationBudget, setAnimationBudget] = useState('full');
+    const [deviceTier, setDeviceTier] = useState('high');
+    const [particleCount, setParticleCount] = useState(30);
 
     useEffect(() => {
-        //  Detect device capability
-        const isLowEnd =
-            (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) ||
-            (navigator.deviceMemory && navigator.deviceMemory < 4);
+        // Detect device tier
+        const cores = navigator.hardwareConcurrency || 2;
+        const memory = navigator.deviceMemory || 4;
 
-        if (isLowEnd) {
+        let tier = 'high';
+        let particles = 30;
+
+        if (cores < 4 || memory < 4) {
+            tier = 'low';
+            particles = 5;
             setAnimationBudget('reduced');
+        } else if (cores < 8 || memory < 8) {
+            tier = 'medium';
+            particles = 12;
         }
 
-        // Handle tab visibility
+        setDeviceTier(tier);
+        setParticleCount(particles);
+
+        // Handle tab visibility - pause animations when tab hidden
         const handleVisibilityChange = () => {
             if (document.hidden) {
                 setAnimationBudget('none');
             } else {
-                setAnimationBudget(isLowEnd ? 'reduced' : 'full');
+                setAnimationBudget(tier === 'low' ? 'reduced' : 'full');
             }
         };
 
@@ -39,7 +58,7 @@ export function PerformanceProvider({ children }) {
     }, []);
 
     return (
-        <PerformanceContext.Provider value={{ animationBudget }}>
+        <PerformanceContext.Provider value={{ animationBudget, deviceTier, particleCount }}>
             {children}
         </PerformanceContext.Provider>
     );

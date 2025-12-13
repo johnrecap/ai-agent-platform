@@ -31,9 +31,9 @@ export default function ParticleSystem({ count = 30 }) {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Adjust particle count for mobile
+        // Adjust particle count for mobile - HEAVILY REDUCED FOR PERFORMANCE
         const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? Math.floor(count / 2) : count;
+        const particleCount = isMobile ? 4 : 8; // Reduced from 15/30
 
         // Initialize particles
         const colors = ['#8B5CF6', '#EC4899', '#06B6D4', '#A78BFA'];
