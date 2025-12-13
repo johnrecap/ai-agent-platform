@@ -1,0 +1,257 @@
+/* 
+ * Design System - Professional Tokens
+ * AI Agent Platform
+ */
+
+/* ============================================
+   COLOR SYSTEM - Reduced Palette
+   ============================================ */
+
+:root {
+    /* Primary Accent - Purple */
+    --color-primary-50: #FAF5FF;
+    --color-primary-100: #F3E8FF;
+    --color-primary-200: #E9D5FF;
+    --color-primary-300: #D8B4FE;
+    --color-primary-400: #C084FC;
+    --color-primary-500: #A855F7;
+    --color-primary-600: #9333EA;
+    --color-primary-700: #7E22CE;
+    --color-primary-800: #6B21A8;
+    --color-primary-900: #581C87;
+    --color-primary-DEFAULT: #8B5CF6;
+
+    /* Secondary Accent - Cyan */
+    --color-secondary-50: #ECFEFF;
+    --color-secondary-100: #CFFAFE;
+    --color-secondary-200: #A5F3FC;
+    --color-secondary-300: #67E8F9;
+    --color-secondary-400: #22D3EE;
+    --color-secondary-500: #06B6D4;
+    --color-secondary-600: #0891B2;
+    --color-secondary-700: #0E7490;
+    --color-secondary-800: #155E75;
+    --color-secondary-900: #164E63;
+    --color-secondary-DEFAULT: #06B6D4;
+
+    /* Neutral Brand Tint - Slate */
+    --color-neutral-0: #FFFFFF;
+    --color-neutral-50: #F8FAFC;
+    --color-neutral-100: #F1F5F9;
+    --color-neutral-200: #E2E8F0;
+    --color-neutral-300: #CBD5E1;
+    --color-neutral-400: #94A3B8;
+    --color-neutral-500: #64748B;
+    --color-neutral-600: #475569;
+    --color-neutral-700: #334155;
+    --color-neutral-800: #1E293B;
+    --color-neutral-900: #0F172A;
+    --color-neutral-950: #020617;
+
+    /* Semantic Status Colors */
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-info: #3B82F6;
+
+    /* ============================================
+     ROLE-BASED COLORS (Dark Theme Default)
+     ============================================ */
+    --role-background: var(--color-neutral-950);
+    --role-surface: var(--color-neutral-900);
+    --role-surface-elevated: var(--color-neutral-800);
+    --role-border: var(--color-neutral-700);
+    --role-border-subtle: var(--color-neutral-800);
+    --role-text-primary: var(--color-neutral-50);
+    --role-text-secondary: var(--color-neutral-400);
+    --role-text-tertiary: var(--color-neutral-500);
+    --role-accent: var(--color-primary-DEFAULT);
+    --role-accent-subtle: var(--color-primary-900);
+
+    /* ============================================
+     SPACING SCALE (4px base)
+     ============================================ */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+    --space-24: 96px;
+
+    /* ============================================
+     RADIUS SCALE
+     ============================================ */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-2xl: 32px;
+    --radius-full: 9999px;
+
+    /* ============================================
+     ELEVATION SYSTEM (5 levels)
+     ============================================ */
+    --elevation-1: 0 1px 2px 0 rgba(139, 92, 246, 0.06);
+    --elevation-2: 0 4px 8px -2px rgba(139, 92, 246, 0.08);
+    --elevation-3: 0 8px 16px -4px rgba(139, 92, 246, 0.10);
+    --elevation-4: 0 16px 32px -6px rgba(139, 92, 246, 0.12);
+    --elevation-5: 0 24px 48px -8px rgba(139, 92, 246, 0.14);
+
+    /* ============================================
+     TYPOGRAPHY SYSTEM
+     ============================================ */
+    --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Type Scale */
+    --text-h1-size: 4rem;
+    /* 64px */
+    --text-h1-line: 1.1;
+    --text-h1-weight: 800;
+
+    --text-h2-size: 3rem;
+    /* 48px */
+    --text-h2-line: 1.2;
+    --text-h2-weight: 700;
+
+    --text-h3-size: 2rem;
+    /* 32px */
+    --text-h3-line: 1.3;
+    --text-h3-weight: 700;
+
+    --text-body-size: 1rem;
+    /* 16px */
+    --text-body-line: 1.6;
+    --text-body-weight: 400;
+
+    --text-small-size: 0.875rem;
+    /* 14px */
+    --text-small-line: 1.5;
+    --text-small-weight: 400;
+
+    /* ============================================
+     MOTION SYSTEM (3 Tiers)
+     ============================================ */
+    --motion-micro-duration: 150ms;
+    --motion-ui-duration: 240ms;
+    --motion-scene-duration: 750ms;
+    --motion-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+    --motion-micro: var(--motion-micro-duration) var(--motion-easing);
+    --motion-ui: var(--motion-ui-duration) var(--motion-easing);
+    --motion-scene: var(--motion-scene-duration) var(--motion-easing);
+}
+
+/* Light Theme */
+[data-theme="light"] {
+    --role-background: var(--color-neutral-50);
+    --role-surface: var(--color-neutral-0);
+    --role-surface-elevated: var(--color-neutral-100);
+    --role-border: var(--color-neutral-200);
+    --role-border-subtle: var(--color-neutral-100);
+    --role-text-primary: var(--color-neutral-900);
+    --role-text-secondary: var(--color-neutral-600);
+    --role-text-tertiary: var(--color-neutral-500);
+    --role-accent: var(--color-primary-600);
+    --role-accent-subtle: var(--color-primary-50);
+}
+
+/* ============================================
+   TYPOGRAPHY CLASSES
+   ============================================ */
+.text-h1 {
+    font-family: var(--font-display);
+    font-size: var(--text-h1-size);
+    line-height: var(--text-h1-line);
+    font-weight: var(--text-h1-weight);
+    letter-spacing: -0.02em;
+}
+
+.text-h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-h2-size);
+    line-height: var(--text-h2-line);
+    font-weight: var(--text-h2-weight);
+    letter-spacing: -0.01em;
+}
+
+.text-h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-h3-size);
+    line-height: var(--text-h3-line);
+    font-weight: var(--text-h3-weight);
+}
+
+.text-body {
+    font-family: var(--font-ui);
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-line);
+    font-weight: var(--text-body-weight);
+}
+
+.text-small {
+    font-family: var(--font-ui);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-line);
+    font-weight: var(--text-small-weight);
+}
+
+/* ============================================
+   INTERACTIVE STATES
+   ============================================ */
+.interactive {
+    transition:
+        box-shadow var(--motion-ui),
+        background var(--motion-ui),
+        transform var(--motion-micro),
+        color var(--motion-micro);
+    cursor: pointer;
+}
+
+.interactive:hover {
+    box-shadow: var(--elevation-3);
+    transform: translateY(-2px);
+}
+
+.interactive:active {
+    transform: translateY(0);
+    box-shadow: var(--elevation-2);
+}
+
+/* ============================================
+   REDUCED MOTION SUPPORT
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ============================================
+   BRAND MOTIF - Thin Neon Grid
+   ============================================ */
+.brand-grid {
+    position: relative;
+}
+
+.brand-grid::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background:
+        linear-gradient(90deg, var(--role-accent) 1px, transparent 1px),
+        linear-gradient(0deg, var(--role-accent) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.08;
+    pointer-events: none;
+}
