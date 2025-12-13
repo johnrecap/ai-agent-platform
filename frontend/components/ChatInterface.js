@@ -163,10 +163,10 @@ export default function ChatInterface({ agentId, agentName, avatarUrl, isWidget 
                     >
                         <div
                             className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${msg.role === 'user'
-                                    ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white rounded-tr-sm shadow-purple-900/20'
-                                    : msg.error
-                                        ? 'bg-red-500/10 text-red-200 border border-red-500/20 rounded-tl-sm'
-                                        : 'bg-white/10 backdrop-blur-sm text-gray-100 rounded-tl-sm border border-white/5'
+                                ? 'bg-gradient-to-br from-purple-600 to-pink-600 text-white rounded-tr-sm shadow-purple-900/20'
+                                : msg.error
+                                    ? 'bg-red-500/10 text-red-200 border border-red-500/20 rounded-tl-sm'
+                                    : 'bg-white/10 backdrop-blur-sm text-gray-100 rounded-tl-sm border border-white/5'
                                 }`}
                         >
                             <p className="text-sm sm:text-base whitespace-pre-wrap leading-relaxed">{msg.content}</p>
@@ -236,12 +236,12 @@ export default function ChatInterface({ agentId, agentName, avatarUrl, isWidget 
                 {/* Branding Footer */}
                 <div className="text-center mt-2 opacity-50 hover:opacity-100 transition-opacity">
                     <a
-                        href="https://github.com/muhammad-saeed"
+                        href="/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[10px] text-gray-400 hover:text-white flex items-center justify-center gap-1"
                     >
-                        <span>Powered by AI Agent</span>
+                        <span>Powered by Muhammad Saeed</span>
                     </a>
                 </div>
             </form>
