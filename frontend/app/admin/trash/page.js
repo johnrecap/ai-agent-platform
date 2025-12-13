@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import { useLanguage } from '@/lib/language';
 import toast from 'react-hot-toast';
-import { GlassCard, Gradient Button, EmptyState } from '@/components/ui';
+import { GlassCard, GradientButton, EmptyState } from '@/components/ui';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 
 export default function TrashPage() {
