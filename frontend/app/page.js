@@ -266,8 +266,8 @@ export default function LandingPage() {
             </div>
 
             {/* Headline */}
-            <div ref={headlineRef} className="relative z-10 mb-6">
-              <h1 className="text-h1">
+            <div ref={headlineRef} className="relative z-10 mb-12">
+              <h1 className="text-h1 mb-0">
                 <TypingText
                   text={content.headline}
                   speed={50}
