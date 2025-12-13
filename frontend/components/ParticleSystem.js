@@ -1,25 +1,39 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePerformance } from '@/lib/PerformanceContext';
 
 /**
  * ParticleSystem Component
  * Creates floating particles in the background
  * Features:
- * - 20-50 particles (responsive)
+ * - Dynamic particle count based on device performance
  * - Random sizes, positions, colors
  * - Smooth 60fps animation via RAF
  * - Mobile optimized
+ * - Tab visibility handling
  */
 
-export default function ParticleSystem({ count = 30 }) {
+export default function ParticleSystem({ count: propCount }) {
     const canvasRef = useRef(null);
     const particlesRef = useRef([]);
     const animationFrameRef = useRef(null);
+    const { particleCount: contextCount, animationBudget } = usePerformance();
+
+    // Use prop count if provided, otherwise use context-based count
+    const baseCount = propCount || contextCount || 15;
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+
+        // Don't animate if budget is 'none' (tab hidden)
+        if (animationBudget === 'none') {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+            return;
+        }
 
         const ctx = canvas.getContext('2d');
 
@@ -31,9 +45,9 @@ export default function ParticleSystem({ count = 30 }) {
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Adjust particle count for mobile - HEAVILY REDUCED FOR PERFORMANCE
+        // Adjust particle count for mobile and performance
         const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? 4 : 8; // Reduced from 15/30
+        const particleCount = isMobile ? Math.min(baseCount, 8) : baseCount;
 
         // Initialize particles
         const colors = ['#8B5CF6', '#EC4899', '#06B6D4', '#A78BFA'];

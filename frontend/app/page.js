@@ -10,9 +10,11 @@
  * - Motion hierarchy
  * - Accessibility (reduced motion, focus management)
  * - Performance optimization (animation budget)
+ * - Lazy loading for heavy components
  */
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { isLoggedIn, isAdmin, logout, getUser } from '@/lib/auth';
 import { useLanguage } from '@/lib/language';
 import { useMotion } from '@/lib/MotionContext';
@@ -22,22 +24,47 @@ import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
 import TrustStrip from '@/components/TrustStrip';
 import PersonalizationSwitcher from '@/components/PersonalizationSwitcher';
-import FloatingChatbot from '@/components/FloatingChatbot';
-import ParticleSystem from '@/components/ParticleSystem';
-import MorphingBlob from '@/components/MorphingBlob';
-import ParallaxOrbs from '@/components/ParallaxOrbs';
-import CustomCursor from '@/components/CustomCursor';
 import MagneticButton from '@/components/MagneticButton';
 import TypingText from '@/components/TypingText';
 import TiltCard from '@/components/TiltCard';
 import ScrollReveal from '@/components/ScrollReveal';
 import BentoGrid from '@/components/BentoGrid';
-import MeshGradient from '@/components/MeshGradient';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import ScrollProgressBar from '@/components/ScrollProgressBar';
 import FAQAccordion from '@/components/FAQAccordion';
 import LogoShowcase from '@/components/LogoShowcase';
 import Timeline from '@/components/Timeline';
+
+// Lazy load heavy animation components for better performance
+const ParticleSystem = dynamic(() => import('@/components/ParticleSystem'), {
+  loading: () => null,
+  ssr: false
+});
+
+const MorphingBlob = dynamic(() => import('@/components/MorphingBlob'), {
+  loading: () => null,
+  ssr: false
+});
+
+const ParallaxOrbs = dynamic(() => import('@/components/ParallaxOrbs'), {
+  loading: () => null,
+  ssr: false
+});
+
+const MeshGradient = dynamic(() => import('@/components/MeshGradient'), {
+  loading: () => null,
+  ssr: false
+});
+
+const CustomCursor = dynamic(() => import('@/components/CustomCursor'), {
+  loading: () => null,
+  ssr: false
+});
+
+const FloatingChatbot = dynamic(() => import('@/components/FloatingChatbot'), {
+  loading: () => null,
+  ssr: false
+});
 
 // Modern icons from Lucide
 import {
@@ -250,13 +277,11 @@ export default function LandingPage() {
       <main className="pt-16" id="main-content">
         {/* Hero Section - Outcome First */}
         <section className="relative min-h-screen flex items-center justify-center px-4 py-20 brand-grid overflow-hidden">
-          {/* Background Effects - OPTIMIZED FOR PERFORMANCE */}
-          <ParticleSystem count={8} />{/* Reduced from 30 */}
-          {/* TEMPORARILY DISABLED FOR PERFORMANCE - TODO: Re-enable with lazy loading
+          {/* Background Effects - Now with lazy loading for better performance */}
+          <ParticleSystem />
           <MorphingBlob />
           <ParallaxOrbs />
           <MeshGradient />
-          */}
 
           {/* Content */}
           <div className="relative z-10 max-w-5xl mx-auto text-center">
