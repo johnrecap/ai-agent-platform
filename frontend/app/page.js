@@ -265,15 +265,17 @@ export default function LandingPage() {
               <PersonalizationSwitcher onChange={setActiveRole} />
             </div>
 
-            {/* Headline */}
-            <div ref={headlineRef} className="relative z-10 mb-12">
-              <h1 className="text-h1 mb-0">
-                <TypingText
-                  text={content.headline}
-                  speed={50}
-                  className="bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent"
-                />
-              </h1>
+            {/* Headline - Fixed overlap issue */}
+            <div ref={headlineRef} className="relative z-20 mb-16 pb-8 overflow-hidden">
+              <div className="max-w-4xl mx-auto">
+                <h1 className="text-h1 mb-0 leading-tight">
+                  <TypingText
+                    text={content.headline}
+                    speed={50}
+                    className="bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 bg-clip-text text-transparent inline-block"
+                  />
+                </h1>
+              </div>
             </div>
 
             {/* Subheadline */}
