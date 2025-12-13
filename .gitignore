@@ -47,3 +47,6 @@ coverage/
 .cache
 .parcel-cache
 .eslintcache
+
+# Root directory files (exclude from git)
+PRODUCTION_ROADMAP.md
