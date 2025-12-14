@@ -81,6 +81,43 @@ const Agent = sequelize.define('Agent', {
         type: DataTypes.DATE,
         allowNull: true,
         comment: 'Timestamp of last avatar update'
+    },
+    // Agent Maker Configuration Fields
+    role: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'Agent role/title (e.g., "Senior Legal Advisor")'
+    },
+    model: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        defaultValue: 'gemini-2.5-flash',
+        comment: 'AI model used (gemini-2.5-flash, gemini-pro, etc.)'
+    },
+    temperature: {
+        type: DataTypes.DECIMAL(2, 1),
+        allowNull: true,
+        defaultValue: 0.7,
+        validate: {
+            min: 0,
+            max: 1
+        },
+        comment: 'Model temperature for creativity (0-1)'
+    },
+    instructions: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'System instructions/prompt for the agent'
+    },
+    capabilities: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: {
+            webSearch: false,
+            codeInterpreter: false,
+            fileAnalysis: false
+        },
+        comment: 'Agent capabilities configuration'
     }
 }, {
     tableName: 'agents',

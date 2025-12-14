@@ -110,11 +110,12 @@ const translations = {
             msgs: 'msgs',
         },
 
-        // Admin
         admin: {
             dashboard: 'Dashboard',
             users: 'Users',
             agents: 'Agents',
+            agentMaker: 'Agent Maker',
+            trash: 'Trash',
             analytics: 'Analytics',
             totalUsers: 'Total Users',
             totalAgents: 'Total Agents',
@@ -267,11 +268,12 @@ const translations = {
             msgs: 'رسائل',
         },
 
-        // Admin
         admin: {
             dashboard: 'لوحة التحكم',
             users: 'المستخدمين',
             agents: 'الوكلاء',
+            agentMaker: 'صانع الوكلاء',
+            trash: 'سلة المحذوفات',
             analytics: 'التحليلات',
             totalUsers: 'إجمالي المستخدمين',
             totalAgents: 'إجمالي الوكلاء',
