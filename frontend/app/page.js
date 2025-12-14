@@ -10,6 +10,7 @@ import HeroSection from '@/components/Home/HeroSection';
 import ProblemSolutionSection from '@/components/Home/ProblemSolutionSection';
 import HowItWorksSection from '@/components/Home/HowItWorksSection';
 import FAQSection from '@/components/Home/FAQSection';
+import PricingSection from '@/components/Home/PricingSection';
 import FinalCTASection from '@/components/Home/FinalCTASection';
 import HomeFooter from '@/components/Home/HomeFooter';
 import ScrollProgressBar from '@/components/ScrollProgressBar';
@@ -131,6 +132,9 @@ export default function LandingPage() {
         <div className="py-24 bg-[var(--role-surface)]">
           <LogoShowcase isRTL={isRTL} />
         </div>
+
+        {/* Pricing Section */}
+        <PricingSection isRTL={isRTL} />
 
         {/* FAQ Section */}
         <FAQSection isRTL={isRTL} />

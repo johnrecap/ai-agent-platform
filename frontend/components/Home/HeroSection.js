@@ -7,6 +7,7 @@ import TrustStrip from '@/components/TrustStrip';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import ParticleSystem from '@/components/ParticleSystem';
 import ParallaxOrbs from '@/components/ParallaxOrbs';
+import MorphingBlob from '@/components/MorphingBlob';
 
 /**
  * Hero Section Component
@@ -22,6 +23,7 @@ export default function HeroSection({ content, activeRole, onRoleChange, isRTL }
             {/* Background Effects */}
             <ParticleSystem />
             <ParallaxOrbs />
+            <MorphingBlob />
 
             {/* Content */}
             <div className="relative z-10 max-w-5xl mx-auto text-center">

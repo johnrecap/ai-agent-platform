@@ -25,17 +25,30 @@ const ChatbotWidget = dynamic(() => import('@/components/ChatbotWidget'), {
     ssr: false,
 });
 
+const OnboardingTour = dynamic(() => import('@/components/OnboardingTour'), {
+    ssr: false,
+});
+
 const { NotificationProvider, NotificationBell, NotificationPanel } = await import('@/components/NotificationCenter');
 
 export default function AdminLayout({ children }) {
     const { isRTL, t } = useLanguage();
     const [isMobile, setIsMobile] = useState(false);
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 1024);
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    useEffect(() => {
+        // Check if user needs onboarding
+        const completed = localStorage.getItem('onboarding_complete');
+        if (!completed) {
+            setTimeout(() => setShowOnboarding(true), 2000);
+        }
     }, []);
 
     return (
@@ -84,6 +97,7 @@ export default function AdminLayout({ children }) {
                     <CommandPalette />
                     <NotificationPanel />
                     <ChatbotWidget />
+                    {showOnboarding && <OnboardingTour onComplete={() => setShowOnboarding(false)} />}
                 </div>
             </NotificationProvider>
         </ProtectedRoute>

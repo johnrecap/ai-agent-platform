@@ -45,8 +45,8 @@ export default function Navbar() {
                         <Link
                             href="/"
                             className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname === '/'
-                                    ? 'text-blue-600 bg-blue-50'
-                                    : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                                ? 'text-blue-600 bg-blue-50'
+                                : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
                                 }`}
                         >
                             Home
@@ -58,8 +58,8 @@ export default function Navbar() {
                                     <Link
                                         href="/admin"
                                         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname.startsWith('/admin')
-                                                ? 'text-blue-600 bg-blue-50'
-                                                : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                                            ? 'text-blue-600 bg-blue-50'
+                                            : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
                                             }`}
                                     >
                                         Admin Panel
@@ -67,13 +67,13 @@ export default function Navbar() {
                                 )}
 
                                 <Link
-                                    href="/dashboard"
-                                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname === '/dashboard'
-                                            ? 'text-blue-600 bg-blue-50'
-                                            : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                                    href="/profile"
+                                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname === '/profile' || pathname.startsWith('/profile')
+                                        ? 'text-blue-600 bg-blue-50'
+                                        : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
                                         }`}
                                 >
-                                    Dashboard
+                                    Profile
                                 </Link>
 
                                 <div className="flex items-center gap-3 ml-4 pl-4 border-l border-gray-200">
@@ -128,8 +128,8 @@ export default function Navbar() {
                                         Admin Panel
                                     </Link>
                                 )}
-                                <Link href="/dashboard" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md">
-                                    Dashboard
+                                <Link href="/profile" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md">
+                                    Profile
                                 </Link>
                                 <button
                                     onClick={handleLogout}
