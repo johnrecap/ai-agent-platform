@@ -5,28 +5,25 @@
 
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const { login, register, getMe, logout } = require('../controllers/auth');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
 
-// @route   POST /api/auth/login
-// @desc    Login user
-// @access  Public
-router.post('/login', authController.login);
+router.post('/login', login);
 
 // @route   POST /api/auth/register
 // @desc    Register new user (admin only)
 // @access  Private/Admin
-router.post('/register', auth, adminAuth, authController.register);
+router.post('/register', auth, adminAuth, register);
 
 // @route   GET /api/auth/me
 // @desc    Get current user info
 // @access  Private
-router.get('/me', auth, authController.getMe);
+router.get('/me', auth, getMe);
 
 // @route   POST /api/auth/logout
 // @desc    Logout user
 // @access  Private
-router.post('/logout', auth, authController.logout);
+router.post('/logout', auth, logout);
 
 module.exports = router;
