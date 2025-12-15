@@ -33,7 +33,7 @@ export default function ProtectedRoute({
 
         // Check admin requirement
         if (requireAdmin && !isAdmin()) {
-            router.push('/dashboard');
+            router.push('/profile');
             return;
         }
 

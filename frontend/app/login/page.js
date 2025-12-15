@@ -21,8 +21,8 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    // Dashboard URL for admins (can be set via NEXT_PUBLIC_DASHBOARD_URL env var)
-    const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/admin';
+    // Dashboard URL for admins - New separate dashboard
+    const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://ai-agent-dashboard-zp8c.vercel.app';
 
     useEffect(() => {
         if (isLoggedIn()) {
