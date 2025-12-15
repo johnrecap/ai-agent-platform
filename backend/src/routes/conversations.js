@@ -17,7 +17,7 @@ const {
     restoreConversation,
     permanentDeleteConversation,
     emptyTrash
-} = require('../controllers/conversationController');
+} = require('../controllers/conversations');
 const { uploadExcel, downloadTemplate } = require('../controllers/excelController');
 const auth = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
