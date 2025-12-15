@@ -8,15 +8,17 @@ const router = express.Router();
 const multer = require('multer');
 const {
     getConversations,
+    getUserConversations,
+    getAgentConversations,
     getConversation,
-    createConversation,
-    updateConversation,
-    deleteConversation,
-    bulkDeleteConversations,
-    getDeletedConversations,
-    restoreConversation,
-    permanentDeleteConversation,
-    emptyTrash
+    searchConversations,
+    softDelete,
+    bulkSoftDelete,
+    permanentDelete,
+    emptyTrash,
+    restore,
+    bulkRestore,
+    getTrash
 } = require('../controllers/conversations');
 const { uploadExcel, downloadTemplate } = require('../controllers/excelController');
 const auth = require('../middleware/auth');
@@ -43,7 +45,7 @@ router.get('/agent/:agentId', getAgentConversations);
 // @route   POST /api/conversations/bulk
 // @desc    Bulk delete conversations
 // @access  Private
-router.delete('/bulk', auth, bulkDeleteConversations);
+router.delete('/bulk-delete', bulkSoftDelete);
 
 // @route   GET /api/conversations/trash
 // @desc    Get deleted conversations (trash)
@@ -68,7 +70,7 @@ router.delete('/trash/empty', auth, emptyTrash);
 // @route   POST /api/conversations/:id/restore
 // @desc    Restore deleted conversation
 // @access  Private
-router.post('/:id/restore', auth, restoreConversation);
+router.post('/:id/restore', restore);
 
 // @route   DELETE /api/conversations/:id/permanent
 // @access  Admin
@@ -82,7 +84,7 @@ router.delete('/:id', softDelete);
 // @route   GET /api/conversations/:id
 // @desc    Get single conversation
 // @access  Private
-router.get('/:id', getConversation);
+router.delete('/:id', softDelete);
 
 // @route   GET /api/conversations
 // @desc    Get current user's conversations
