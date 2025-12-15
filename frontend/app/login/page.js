@@ -46,7 +46,11 @@ export default function LoginPage() {
             await login(email, password);
             toast.success(t('login.loginSuccess'));
             if (isAdmin() && dashboardUrl.startsWith('http')) {
-                window.location.href = dashboardUrl;
+                // Pass JWT token to dashboard for seamless auth
+                const token = localStorage.getItem('token');
+                const user = localStorage.getItem('user');
+                const dashboardWithAuth = `${dashboardUrl}#/login?token=${encodeURIComponent(token)}&user=${encodeURIComponent(user)}`;
+                window.location.href = dashboardWithAuth;
             } else {
                 router.push(isAdmin() ? dashboardUrl : '/profile');
             }

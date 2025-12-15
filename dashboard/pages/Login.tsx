@@ -16,6 +16,29 @@ const Login = () => {
 
   const from = location.state?.from?.pathname || '/';
 
+  // Check for token in URL (redirected from main site)
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.includes('token=')) {
+      const params = new URLSearchParams(hash.split('?')[1]);
+      const token = params.get('token');
+      const userStr = params.get('user');
+
+      if (token && userStr) {
+        try {
+          // Store token and user from main site
+          localStorage.setItem('token', token);
+          localStorage.setItem('nexus_user', userStr);
+          // Clear URL hash and redirect to dashboard
+          window.location.hash = '#/';
+          window.location.reload();
+        } catch (e) {
+          console.error('Failed to parse auth from URL:', e);
+        }
+      }
+    }
+  }, []);
+
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
