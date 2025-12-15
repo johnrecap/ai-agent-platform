@@ -55,15 +55,14 @@ export default function Navbar() {
                         {user ? (
                             <>
                                 {isAdmin() && (
-                                    <Link
-                                        href="/admin"
-                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname.startsWith('/admin')
-                                            ? 'text-blue-600 bg-blue-50'
-                                            : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
-                                            }`}
+                                    <a
+                                        href="https://ai-agent-dashboard-zp8c.vercel.app"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="px-3 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-50"
                                     >
                                         Admin Panel
-                                    </Link>
+                                    </a>
                                 )}
 
                                 <Link
@@ -124,9 +123,9 @@ export default function Navbar() {
                         {user ? (
                             <>
                                 {isAdmin() && (
-                                    <Link href="/admin" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md">
+                                    <a href="https://ai-agent-dashboard-zp8c.vercel.app" target="_blank" rel="noopener noreferrer" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md">
                                         Admin Panel
-                                    </Link>
+                                    </a>
                                 )}
                                 <Link href="/profile" className="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md">
                                     Profile

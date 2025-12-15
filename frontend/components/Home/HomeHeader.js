@@ -15,8 +15,8 @@ export default function HomeHeader({ isScrolled, isRTL, language, onLanguageTogg
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${isScrolled
-                    ? 'border-[var(--role-border)] bg-[var(--role-surface)]/90 backdrop-blur-md shadow-lg'
-                    : 'border-[var(--role-border)]/50 bg-[var(--role-surface)]/60 backdrop-blur-2xl'
+                ? 'border-[var(--role-border)] bg-[var(--role-surface)]/90 backdrop-blur-md shadow-lg'
+                : 'border-[var(--role-border)]/50 bg-[var(--role-surface)]/60 backdrop-blur-2xl'
                 }`}
             style={{ boxShadow: isScrolled ? '0 4px 16px rgba(0, 0, 0, 0.1)' : 'none' }}
         >
@@ -41,12 +41,14 @@ export default function HomeHeader({ isScrolled, isRTL, language, onLanguageTogg
                     {loggedIn ? (
                         <div className="flex items-center gap-3">
                             {userIsAdmin && (
-                                <Link
-                                    href="/admin"
+                                <a
+                                    href="https://ai-agent-dashboard-zp8c.vercel.app"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="text-sm text-[var(--role-text-secondary)] hover:text-[var(--role-accent)] interactive"
                                 >
                                     {isRTL ? 'لوحة التحكم' : 'Admin'}
-                                </Link>
+                                </a>
                             )}
                             <button
                                 onClick={handleLogout}
