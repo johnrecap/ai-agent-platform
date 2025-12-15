@@ -1,0 +1,1098 @@
+const codeChars =
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789(){}[]<>;:,._-+=!@#$%^&*|\\/\"'`~?";
+
+const scannerLeft = window.innerWidth / 2 - 2;
+const scannerRight = window.innerWidth / 2 + 2;
+
+class CardStreamController {
+  constructor() {
+    this.container = document.getElementById("cardStream");
+    this.cardLine = document.getElementById("cardLine");
+    this.speedIndicator = document.getElementById("speedValue");
+
+    this.position = 0;
+    this.velocity = 120;
+    this.direction = -1;
+    this.isAnimating = true;
+    this.isDragging = false;
+
+    this.lastTime = 0;
+    this.lastMouseX = 0;
+    this.mouseVelocity = 0;
+    this.friction = 0.95;
+    this.minVelocity = 30;
+
+    this.containerWidth = 0;
+    this.cardLineWidth = 0;
+
+    // IntersectionObserver للبطاقات المرئية
+    this.visibleCards = new Set();
+    this.observer = null;
+
+    // Event handlers refs للـ cleanup
+    this.handlers = {
+      mousedown: (e) => this.startDrag(e),
+      mousemove: (e) => this.onDrag(e),
+      mouseup: () => this.endDrag(),
+      touchstart: (e) => this.startDrag(e.touches[0]),
+      touchmove: (e) => this.onDrag(e.touches[0]),
+      touchend: () => this.endDrag(),
+      wheel: (e) => this.onWheel(e),
+      selectstart: (e) => e.preventDefault(),
+      dragstart: (e) => e.preventDefault(),
+      resize: () => this.calculateDimensions()
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.populateCardLine();
+    this.calculateDimensions();
+    this.setupIntersectionObserver();
+    this.setupEventListeners();
+    this.updateCardPosition();
+    this.animate();
+    this.startPeriodicUpdates();
+  }
+
+  setupIntersectionObserver() {
+    const options = {
+      root: null,
+      rootMargin: "200px",
+      threshold: 0
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          this.visibleCards.add(entry.target);
+        } else {
+          this.visibleCards.delete(entry.target);
+        }
+      });
+    }, options);
+
+    // مراقبة كل البطاقات
+    document.querySelectorAll(".card-wrapper").forEach((card) => {
+      this.observer.observe(card);
+    });
+  }
+
+  calculateDimensions() {
+    this.containerWidth = this.container.offsetWidth;
+    const cardWidth = 400;
+    const cardGap = 60;
+    const cardCount = this.cardLine.children.length;
+    this.cardLineWidth = (cardWidth + cardGap) * cardCount;
+  }
+
+  setupEventListeners() {
+    this.cardLine.addEventListener("mousedown", this.handlers.mousedown);
+    document.addEventListener("mousemove", this.handlers.mousemove);
+    document.addEventListener("mouseup", this.handlers.mouseup);
+
+    this.cardLine.addEventListener("touchstart", this.handlers.touchstart, {
+      passive: false
+    });
+    document.addEventListener("touchmove", this.handlers.touchmove, {
+      passive: false
+    });
+    document.addEventListener("touchend", this.handlers.touchend);
+
+    this.cardLine.addEventListener("wheel", this.handlers.wheel);
+    this.cardLine.addEventListener("selectstart", this.handlers.selectstart);
+    this.cardLine.addEventListener("dragstart", this.handlers.dragstart);
+
+    window.addEventListener("resize", this.handlers.resize);
+  }
+
+  startDrag(e) {
+    e.preventDefault();
+
+    this.isDragging = true;
+    this.isAnimating = false;
+    this.lastMouseX = e.clientX;
+    this.mouseVelocity = 0;
+
+    const transform = window.getComputedStyle(this.cardLine).transform;
+    if (transform !== "none") {
+      try {
+        const matrix = new DOMMatrix(transform);
+        this.position = matrix.m41;
+      } catch (error) {
+        // Fallback للمتصفحات القديمة
+        const values = transform.match(/matrix.*\((.+)\)/)[1].split(", ");
+        this.position = parseFloat(values[4]);
+      }
+    }
+
+    this.cardLine.style.animation = "none";
+    this.cardLine.classList.add("dragging");
+
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "grabbing";
+  }
+
+  onDrag(e) {
+    if (!this.isDragging) return;
+    e.preventDefault();
+
+    const deltaX = e.clientX - this.lastMouseX;
+    this.position += deltaX;
+    this.mouseVelocity = deltaX * 60;
+    this.lastMouseX = e.clientX;
+
+    this.cardLine.style.transform = `translateX(${this.position}px)`;
+    this.updateCardClipping();
+  }
+
+  endDrag() {
+    if (!this.isDragging) return;
+
+    this.isDragging = false;
+    this.cardLine.classList.remove("dragging");
+
+    if (Math.abs(this.mouseVelocity) > this.minVelocity) {
+      this.velocity = Math.abs(this.mouseVelocity);
+      this.direction = this.mouseVelocity > 0 ? 1 : -1;
+    } else {
+      this.velocity = 120;
+    }
+
+    this.isAnimating = true;
+    this.updateSpeedIndicator();
+
+    document.body.style.userSelect = "";
+    document.body.style.cursor = "";
+  }
+
+  animate() {
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - this.lastTime) / 1000;
+    this.lastTime = currentTime;
+
+    if (this.isAnimating && !this.isDragging) {
+      if (this.velocity > this.minVelocity) {
+        this.velocity *= this.friction;
+      } else {
+        this.velocity = Math.max(this.minVelocity, this.velocity);
+      }
+
+      this.position += this.velocity * this.direction * deltaTime;
+      this.updateCardPosition();
+      this.updateSpeedIndicator();
+    }
+
+    requestAnimationFrame(() => this.animate());
+  }
+
+  updateCardPosition() {
+    const containerWidth = this.containerWidth;
+    const cardLineWidth = this.cardLineWidth;
+
+    if (this.position < -cardLineWidth) {
+      this.position = containerWidth;
+    } else if (this.position > containerWidth) {
+      this.position = -cardLineWidth;
+    }
+
+    this.cardLine.style.transform = `translateX(${this.position}px)`;
+    this.updateCardClipping();
+  }
+
+  updateSpeedIndicator() {
+    this.speedIndicator.textContent = Math.round(this.velocity);
+  }
+
+  toggleAnimation() {
+    this.isAnimating = !this.isAnimating;
+    const btn = document.querySelector(".control-btn");
+    btn.textContent = this.isAnimating ? "⏸️ Pause" : "▶️ Play";
+
+    if (this.isAnimating) {
+      this.cardLine.style.animation = "none";
+    }
+  }
+
+  resetPosition() {
+    this.position = this.containerWidth;
+    this.velocity = 120;
+    this.direction = -1;
+    this.isAnimating = true;
+    this.isDragging = false;
+
+    this.cardLine.style.animation = "none";
+    this.cardLine.style.transform = `translateX(${this.position}px)`;
+    this.cardLine.classList.remove("dragging");
+
+    this.updateSpeedIndicator();
+
+    const btn = document.querySelector(".control-btn");
+    btn.textContent = "⏸️ Pause";
+  }
+
+  changeDirection() {
+    this.direction *= -1;
+    this.updateSpeedIndicator();
+  }
+
+  onWheel(e) {
+    e.preventDefault();
+
+    const scrollSpeed = 20;
+    const delta = e.deltaY > 0 ? scrollSpeed : -scrollSpeed;
+
+    this.position += delta;
+    this.updateCardPosition();
+    this.updateCardClipping();
+  }
+
+  generateCode(width, height) {
+    const randInt = (min, max) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+    const pick = (arr) => arr[randInt(0, arr.length - 1)];
+
+    const header = [
+      "// compiled preview • scanner demo",
+      "/* generated for visual effect – not executed */",
+      "const SCAN_WIDTH = 8;",
+      "const FADE_ZONE = 35;",
+      "const MAX_PARTICLES = 2500;",
+      "const TRANSITION = 0.05;"
+    ];
+
+    const helpers = [
+      "function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }",
+      "function lerp(a, b, t) { return a + (b - a) * t; }",
+      "const now = () => performance.now();",
+      "function rng(min, max) { return Math.random() * (max - min) + min; }"
+    ];
+
+    const particleBlock = (idx) => [
+      `class Particle${idx} {`,
+      "  constructor(x, y, vx, vy, r, a) {",
+      "    this.x = x; this.y = y;",
+      "    this.vx = vx; this.vy = vy;",
+      "    this.r = r; this.a = a;",
+      "  }",
+      "  step(dt) { this.x += this.vx * dt; this.y += this.vy * dt; }",
+      "}"
+    ];
+
+    const scannerBlock = [
+      "const scanner = {",
+      "  x: Math.floor(window.innerWidth / 2),",
+      "  width: SCAN_WIDTH,",
+      "  glow: 3.5,",
+      "};",
+      "",
+      "function drawParticle(ctx, p) {",
+      "  ctx.globalAlpha = clamp(p.a, 0, 1);",
+      "  ctx.drawImage(gradient, p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);",
+      "}"
+    ];
+
+    const loopBlock = [
+      "function tick(t) {",
+      "  // requestAnimationFrame(tick);",
+      "  const dt = 0.016;",
+      "  // update & render",
+      "}"
+    ];
+
+    const misc = [
+      "const state = { intensity: 1.2, particles: MAX_PARTICLES };",
+      "const bounds = { w: window.innerWidth, h: 300 };",
+      "const gradient = document.createElement('canvas');",
+      "const ctx = gradient.getContext('2d');",
+      "ctx.globalCompositeOperation = 'lighter';",
+      "// ascii overlay is masked with a 3-phase gradient"
+    ];
+
+    const library = [];
+    header.forEach((l) => library.push(l));
+    helpers.forEach((l) => library.push(l));
+    for (let b = 0; b < 3; b++)
+      particleBlock(b).forEach((l) => library.push(l));
+    scannerBlock.forEach((l) => library.push(l));
+    loopBlock.forEach((l) => library.push(l));
+    misc.forEach((l) => library.push(l));
+
+    for (let i = 0; i < 40; i++) {
+      const n1 = randInt(1, 9);
+      const n2 = randInt(10, 99);
+      library.push(`const v${i} = (${n1} + ${n2}) * 0.${randInt(1, 9)};`);
+    }
+    for (let i = 0; i < 20; i++) {
+      library.push(
+        `if (state.intensity > ${1 + (i % 3)}) { scanner.glow += 0.01; }`
+      );
+    }
+
+    let flow = library.join(" ");
+    flow = flow.replace(/\s+/g, " ").trim();
+    const totalChars = width * height;
+    while (flow.length < totalChars + width) {
+      const extra = pick(library).replace(/\s+/g, " ").trim();
+      flow += " " + extra;
+    }
+
+    let out = "";
+    let offset = 0;
+    for (let row = 0; row < height; row++) {
+      let line = flow.slice(offset, offset + width);
+      if (line.length < width) line = line + " ".repeat(width - line.length);
+      out += line + (row < height - 1 ? "\n" : "");
+      offset += width;
+    }
+    return out;
+  }
+
+  calculateCodeDimensions(cardWidth, cardHeight) {
+    const fontSize = 11;
+    const lineHeight = 13;
+    const charWidth = 6;
+    const width = Math.floor(cardWidth / charWidth);
+    const height = Math.floor(cardHeight / lineHeight);
+    return { width, height, fontSize, lineHeight };
+  }
+
+  createCardWrapper(index) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "card-wrapper";
+
+    const normalCard = document.createElement("div");
+    normalCard.className = "card card-normal";
+
+    const cardImages = [
+      "https://cdn.prod.website-files.com/68789c86c8bc802d61932544/689f20b55e654d1341fb06f8_4.1.png",
+      "https://cdn.prod.website-files.com/68789c86c8bc802d61932544/689f20b5a080a31ee7154b19_1.png",
+      "https://cdn.prod.website-files.com/68789c86c8bc802d61932544/689f20b5c1e4919fd69672b8_3.png",
+      "https://cdn.prod.website-files.com/68789c86c8bc802d61932544/689f20b5f6a5e232e7beb4be_2.png",
+      "https://cdn.prod.website-files.com/68789c86c8bc802d61932544/689f20b5bea2f1b07392d936_4.png"
+    ];
+
+    const cardImage = document.createElement("img");
+    cardImage.className = "card-image";
+    cardImage.src = cardImages[index % cardImages.length];
+    cardImage.alt = "Credit Card";
+    cardImage.crossOrigin = "anonymous"; // إضافة CORS
+
+    cardImage.onerror = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 250;
+        const ctx = canvas.getContext("2d");
+
+        const gradient = ctx.createLinearGradient(0, 0, 400, 250);
+        gradient.addColorStop(0, "#667eea");
+        gradient.addColorStop(1, "#764ba2");
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 400, 250);
+
+        cardImage.src = canvas.toDataURL();
+      } catch (error) {
+        console.error("Failed to create fallback image:", error);
+      }
+    };
+
+    normalCard.appendChild(cardImage);
+
+    const asciiCard = document.createElement("div");
+    asciiCard.className = "card card-ascii";
+
+    const asciiContent = document.createElement("div");
+    asciiContent.className = "ascii-content";
+
+    const {
+      width,
+      height,
+      fontSize,
+      lineHeight
+    } = this.calculateCodeDimensions(400, 250);
+    asciiContent.style.fontSize = fontSize + "px";
+    asciiContent.style.lineHeight = lineHeight + "px";
+    asciiContent.textContent = this.generateCode(width, height);
+
+    asciiCard.appendChild(asciiContent);
+    wrapper.appendChild(normalCard);
+    wrapper.appendChild(asciiCard);
+
+    return wrapper;
+  }
+
+  updateCardClipping() {
+    const scannerX = window.innerWidth / 2;
+    const scannerWidth = 8;
+    const scannerLeft = scannerX - scannerWidth / 2;
+    const scannerRight = scannerX + scannerWidth / 2;
+    let anyScanningActive = false;
+
+    // تحديث البطاقات المرئية فقط
+    this.visibleCards.forEach((wrapper) => {
+      const rect = wrapper.getBoundingClientRect();
+      const cardLeft = rect.left;
+      const cardRight = rect.right;
+      const cardWidth = rect.width;
+
+      const normalCard = wrapper.querySelector(".card-normal");
+      const asciiCard = wrapper.querySelector(".card-ascii");
+
+      if (cardLeft < scannerRight && cardRight > scannerLeft) {
+        anyScanningActive = true;
+        const scannerIntersectLeft = Math.max(scannerLeft - cardLeft, 0);
+        const scannerIntersectRight = Math.min(
+          scannerRight - cardLeft,
+          cardWidth
+        );
+
+        const normalClipRight = (scannerIntersectLeft / cardWidth) * 100;
+        const asciiClipLeft = (scannerIntersectRight / cardWidth) * 100;
+
+        normalCard.style.setProperty("--clip-right", `${normalClipRight}%`);
+        asciiCard.style.setProperty("--clip-left", `${asciiClipLeft}%`);
+
+        if (!wrapper.hasAttribute("data-scanned") && scannerIntersectLeft > 0) {
+          wrapper.setAttribute("data-scanned", "true");
+          const scanEffect = document.createElement("div");
+          scanEffect.className = "scan-effect";
+          wrapper.appendChild(scanEffect);
+          setTimeout(() => {
+            if (scanEffect.parentNode) {
+              scanEffect.parentNode.removeChild(scanEffect);
+            }
+          }, 600);
+        }
+      } else {
+        if (cardRight < scannerLeft) {
+          normalCard.style.setProperty("--clip-right", "100%");
+          asciiCard.style.setProperty("--clip-left", "100%");
+        } else if (cardLeft > scannerRight) {
+          normalCard.style.setProperty("--clip-right", "0%");
+          asciiCard.style.setProperty("--clip-left", "0%");
+        }
+        wrapper.removeAttribute("data-scanned");
+      }
+    });
+
+    if (window.setScannerScanning) {
+      window.setScannerScanning(anyScanningActive);
+    }
+  }
+
+  updateAsciiContent() {
+    // تحديث ASCII للبطاقات المرئية فقط
+    this.visibleCards.forEach((wrapper) => {
+      const content = wrapper.querySelector(".ascii-content");
+      if (content && Math.random() < 0.15) {
+        const { width, height } = this.calculateCodeDimensions(400, 250);
+        content.textContent = this.generateCode(width, height);
+      }
+    });
+  }
+
+  populateCardLine() {
+    this.cardLine.innerHTML = "";
+    const cardsCount = 30;
+    for (let i = 0; i < cardsCount; i++) {
+      const cardWrapper = this.createCardWrapper(i);
+      this.cardLine.appendChild(cardWrapper);
+    }
+  }
+
+  startPeriodicUpdates() {
+    this.asciiUpdateInterval = setInterval(() => {
+      this.updateAsciiContent();
+    }, 200);
+
+    const updateClipping = () => {
+      this.updateCardClipping();
+      this.clippingAnimationFrame = requestAnimationFrame(updateClipping);
+    };
+    updateClipping();
+  }
+
+  destroy() {
+    // تنظيف Event Listeners
+    this.cardLine.removeEventListener("mousedown", this.handlers.mousedown);
+    document.removeEventListener("mousemove", this.handlers.mousemove);
+    document.removeEventListener("mouseup", this.handlers.mouseup);
+    this.cardLine.removeEventListener("touchstart", this.handlers.touchstart);
+    document.removeEventListener("touchmove", this.handlers.touchmove);
+    document.removeEventListener("touchend", this.handlers.touchend);
+    this.cardLine.removeEventListener("wheel", this.handlers.wheel);
+    this.cardLine.removeEventListener("selectstart", this.handlers.selectstart);
+    this.cardLine.removeEventListener("dragstart", this.handlers.dragstart);
+    window.removeEventListener("resize", this.handlers.resize);
+
+    // تنظيف IntersectionObserver
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+
+    // تنظيف Intervals & Animation Frames
+    if (this.asciiUpdateInterval) {
+      clearInterval(this.asciiUpdateInterval);
+    }
+    if (this.clippingAnimationFrame) {
+      cancelAnimationFrame(this.clippingAnimationFrame);
+    }
+
+    this.visibleCards.clear();
+  }
+}
+
+let cardStream;
+
+function toggleAnimation() {
+  if (cardStream) {
+    cardStream.toggleAnimation();
+  }
+}
+
+function resetPosition() {
+  if (cardStream) {
+    cardStream.resetPosition();
+  }
+}
+
+function changeDirection() {
+  if (cardStream) {
+    cardStream.changeDirection();
+  }
+}
+
+class ParticleSystem {
+  constructor() {
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.particles = null;
+    this.particleCount = 400;
+    this.canvas = document.getElementById("particleCanvas");
+    this.animationFrame = null;
+    this.resizeHandler = () => this.onWindowResize();
+
+    this.init();
+  }
+
+  init() {
+    this.scene = new THREE.Scene();
+
+    this.camera = new THREE.OrthographicCamera(
+      -window.innerWidth / 2,
+      window.innerWidth / 2,
+      125,
+      -125,
+      1,
+      1000
+    );
+    this.camera.position.z = 100;
+
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      alpha: true,
+      antialias: true
+    });
+    this.renderer.setSize(window.innerWidth, 250);
+    this.renderer.setClearColor(0x000000, 0);
+
+    this.createParticles();
+    this.animate();
+
+    window.addEventListener("resize", this.resizeHandler);
+  }
+
+  createParticles() {
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(this.particleCount * 3);
+    const colors = new Float32Array(this.particleCount * 3);
+    const sizes = new Float32Array(this.particleCount);
+    const velocities = new Float32Array(this.particleCount);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    const ctx = canvas.getContext("2d");
+
+    const half = canvas.width / 2;
+    const hue = 217;
+
+    const gradient = ctx.createRadialGradient(half, half, 0, half, half, half);
+    gradient.addColorStop(0.025, "#fff");
+    gradient.addColorStop(0.1, `hsl(${hue}, 61%, 33%)`);
+    gradient.addColorStop(0.25, `hsl(${hue}, 64%, 6%)`);
+    gradient.addColorStop(1, "transparent");
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(half, half, half, 0, Math.PI * 2);
+    ctx.fill();
+
+    const texture = new THREE.CanvasTexture(canvas);
+
+    for (let i = 0; i < this.particleCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * window.innerWidth * 2;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 250;
+      positions[i * 3 + 2] = 0;
+
+      colors[i * 3] = 1;
+      colors[i * 3 + 1] = 1;
+      colors[i * 3 + 2] = 1;
+
+      const orbitRadius = Math.random() * 200 + 100;
+      sizes[i] = (Math.random() * (orbitRadius - 60) + 60) / 8;
+
+      velocities[i] = Math.random() * 60 + 30;
+    }
+
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
+
+    this.velocities = velocities;
+
+    const alphas = new Float32Array(this.particleCount);
+    for (let i = 0; i < this.particleCount; i++) {
+      alphas[i] = (Math.random() * 8 + 2) / 10;
+    }
+    geometry.setAttribute("alpha", new THREE.BufferAttribute(alphas, 1));
+    this.alphas = alphas;
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        pointTexture: { value: texture },
+        size: { value: 15.0 }
+      },
+      vertexShader: `
+        attribute float alpha;
+        varying float vAlpha;
+        varying vec3 vColor;
+        uniform float size;
+        
+        void main() {
+          vAlpha = alpha;
+          vColor = color;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size;
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D pointTexture;
+        varying float vAlpha;
+        varying vec3 vColor;
+        
+        void main() {
+          gl_FragColor = vec4(vColor, vAlpha) * texture2D(pointTexture, gl_PointCoord);
+        }
+      `,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      vertexColors: true
+    });
+
+    this.particles = new THREE.Points(geometry, material);
+    this.scene.add(this.particles);
+  }
+
+  animate() {
+    this.animationFrame = requestAnimationFrame(() => this.animate());
+
+    if (this.particles) {
+      const positions = this.particles.geometry.attributes.position.array;
+      const alphas = this.particles.geometry.attributes.alpha.array;
+      const time = Date.now() * 0.001;
+
+      for (let i = 0; i < this.particleCount; i++) {
+        positions[i * 3] += this.velocities[i] * 0.016;
+
+        if (positions[i * 3] > window.innerWidth / 2 + 100) {
+          positions[i * 3] = -window.innerWidth / 2 - 100;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 250;
+        }
+
+        positions[i * 3 + 1] += Math.sin(time + i * 0.1) * 0.5;
+
+        const twinkle = Math.floor(Math.random() * 10);
+        if (twinkle === 1 && alphas[i] > 0) {
+          alphas[i] -= 0.05;
+        } else if (twinkle === 2 && alphas[i] < 1) {
+          alphas[i] += 0.05;
+        }
+
+        alphas[i] = Math.max(0, Math.min(1, alphas[i]));
+      }
+
+      this.particles.geometry.attributes.position.needsUpdate = true;
+      this.particles.geometry.attributes.alpha.needsUpdate = true;
+    }
+
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  onWindowResize() {
+    this.camera.left = -window.innerWidth / 2;
+    this.camera.right = window.innerWidth / 2;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(window.innerWidth, 250);
+  }
+
+  destroy() {
+    window.removeEventListener("resize", this.resizeHandler);
+
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+    }
+
+    if (this.renderer) {
+      this.renderer.dispose();
+    }
+    if (this.particles) {
+      this.scene.remove(this.particles);
+      this.particles.geometry.dispose();
+      this.particles.material.dispose();
+    }
+  }
+}
+
+let particleSystem;
+
+class ParticleScanner {
+  constructor() {
+    this.canvas = document.getElementById("scannerCanvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.animationId = null;
+
+    this.w = window.innerWidth;
+    this.h = 300;
+    this.particles = [];
+    this.count = 0;
+    this.maxParticles = 800;
+    this.intensity = 0.8;
+    this.lightBarX = this.w / 2;
+    this.lightBarWidth = 3;
+    this.fadeZone = 60;
+
+    this.scanTargetIntensity = 1.8;
+    this.scanTargetParticles = 2500;
+    this.scanTargetFadeZone = 35;
+
+    this.scanningActive = false;
+
+    this.baseIntensity = this.intensity;
+    this.baseMaxParticles = this.maxParticles;
+    this.baseFadeZone = this.fadeZone;
+
+    this.currentIntensity = this.intensity;
+    this.currentMaxParticles = this.maxParticles;
+    this.currentFadeZone = this.fadeZone;
+    this.transitionSpeed = 0.05;
+
+    this.resizeHandler = () => this.onResize();
+
+    this.setupCanvas();
+    this.createGradientCache();
+    this.initParticles();
+    this.animate();
+
+    window.addEventListener("resize", this.resizeHandler);
+  }
+
+  setupCanvas() {
+    this.canvas.width = this.w;
+    this.canvas.height = this.h;
+    this.canvas.style.width = this.w + "px";
+    this.canvas.style.height = this.h + "px";
+    this.ctx.clearRect(0, 0, this.w, this.h);
+  }
+
+  onResize() {
+    this.w = window.innerWidth;
+    this.lightBarX = this.w / 2;
+    this.setupCanvas();
+  }
+
+  createGradientCache() {
+    this.gradientCanvas = document.createElement("canvas");
+    this.gradientCtx = this.gradientCanvas.getContext("2d");
+    this.gradientCanvas.width = 16;
+    this.gradientCanvas.height = 16;
+
+    const half = this.gradientCanvas.width / 2;
+    const gradient = this.gradientCtx.createRadialGradient(
+      half,
+      half,
+      0,
+      half,
+      half,
+      half
+    );
+    gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+    gradient.addColorStop(0.3, "rgba(196, 181, 253, 0.8)");
+    gradient.addColorStop(0.7, "rgba(139, 92, 246, 0.4)");
+    gradient.addColorStop(1, "transparent");
+
+    this.gradientCtx.fillStyle = gradient;
+    this.gradientCtx.beginPath();
+    this.gradientCtx.arc(half, half, half, 0, Math.PI * 2);
+    this.gradientCtx.fill();
+  }
+
+  random(min, max) {
+    if (arguments.length < 2) {
+      max = min;
+      min = 0;
+    }
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  randomFloat(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  createParticle() {
+    const intensityRatio = this.intensity / this.baseIntensity;
+    const speedMultiplier = 1 + (intensityRatio - 1) * 1.2;
+    const sizeMultiplier = 1 + (intensityRatio - 1) * 0.7;
+
+    return {
+      x:
+        this.lightBarX +
+        this.randomFloat(-this.lightBarWidth / 2, this.lightBarWidth / 2),
+      y: this.randomFloat(0, this.h),
+      vx: this.randomFloat(60, 150) * speedMultiplier,
+      vy: this.randomFloat(-20, 20),
+      radius: this.randomFloat(3, 8) * sizeMultiplier,
+      alpha: this.randomFloat(0.6, 1),
+      side: Math.random() < 0.5 ? -1 : 1,
+      startX: 0,
+      originalAlpha: 0
+    };
+  }
+
+  initParticles() {
+    for (let i = 0; i < this.maxParticles / 2; i++) {
+      const p = this.createParticle();
+      p.originalAlpha = p.alpha;
+      p.startX = p.x;
+      this.count++;
+      this.particles[this.count] = p;
+    }
+  }
+
+  updateParticle(p) {
+    p.x += p.vx * p.side * 0.016;
+    p.y += p.vy * 0.016;
+
+    const dist = Math.abs(p.x - p.startX);
+    const fadeZone = this.fadeZone;
+
+    if (dist < fadeZone) {
+      p.alpha = p.originalAlpha * (dist / fadeZone);
+    } else {
+      p.alpha = p.originalAlpha;
+    }
+
+    if (p.y < 0 || p.y > this.h) {
+      p.vy *= -1;
+    }
+
+    if (
+      (p.side === 1 && p.x > this.w + 100) ||
+      (p.side === -1 && p.x < -100)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  drawParticle(p) {
+    this.ctx.globalAlpha = p.alpha;
+    this.ctx.drawImage(
+      this.gradientCanvas,
+      p.x - p.radius,
+      p.y - p.radius,
+      p.radius * 2,
+      p.radius * 2
+    );
+  }
+
+  drawLightBar() {
+    const barHeight = this.h;
+    const barY = 0;
+
+    const gradient = this.ctx.createLinearGradient(
+      this.lightBarX - this.lightBarWidth,
+      0,
+      this.lightBarX + this.lightBarWidth,
+      0
+    );
+    gradient.addColorStop(0, "rgba(139, 92, 246, 0)");
+    gradient.addColorStop(0.5, "rgba(139, 92, 246, 0.4)");
+    gradient.addColorStop(1, "rgba(139, 92, 246, 0)");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(
+      this.lightBarX - this.lightBarWidth,
+      barY,
+      this.lightBarWidth * 2,
+      barHeight
+    );
+  }
+
+  render() {
+    const targetIntensity = this.scanningActive
+      ? this.scanTargetIntensity
+      : this.baseIntensity;
+    const targetMaxParticles = this.scanningActive
+      ? this.scanTargetParticles
+      : this.baseMaxParticles;
+    const targetFadeZone = this.scanningActive
+      ? this.scanTargetFadeZone
+      : this.baseFadeZone;
+
+    this.intensity +=
+      (targetIntensity - this.intensity) * this.transitionSpeed;
+    this.maxParticles +=
+      (targetMaxParticles - this.maxParticles) * this.transitionSpeed;
+    this.fadeZone += (targetFadeZone - this.fadeZone) * this.transitionSpeed;
+
+    this.ctx.globalCompositeOperation = "source-over";
+    this.ctx.clearRect(0, 0, this.w, this.h);
+
+    this.drawLightBar();
+
+    this.ctx.globalCompositeOperation = "lighter";
+
+    for (let i = 1; i <= this.count; i++) {
+      if (this.particles[i]) {
+        const alive = this.updateParticle(this.particles[i]);
+        if (alive) {
+          this.drawParticle(this.particles[i]);
+        } else {
+          delete this.particles[i];
+        }
+      }
+    }
+
+    const currentIntensity = this.intensity;
+    const currentMaxParticles = this.maxParticles;
+
+    if (Math.random() < currentIntensity && this.count < currentMaxParticles) {
+      const particle = this.createParticle();
+      particle.originalAlpha = particle.alpha;
+      particle.startX = particle.x;
+      this.count++;
+      this.particles[this.count] = particle;
+    }
+
+    const intensityRatio = this.intensity / this.baseIntensity;
+
+    if (intensityRatio > 1.1 && Math.random() < (intensityRatio - 1.0) * 1.2) {
+      const particle = this.createParticle();
+      particle.originalAlpha = particle.alpha;
+      particle.startX = particle.x;
+      this.count++;
+      this.particles[this.count] = particle;
+    }
+
+    if (intensityRatio > 1.3 && Math.random() < (intensityRatio - 1.3) * 1.4) {
+      const particle = this.createParticle();
+      particle.originalAlpha = particle.alpha;
+      particle.startX = particle.x;
+      this.count++;
+      this.particles[this.count] = particle;
+    }
+
+    if (intensityRatio > 1.5 && Math.random() < (intensityRatio - 1.5) * 1.8) {
+      const particle = this.createParticle();
+      particle.originalAlpha = particle.alpha;
+      particle.startX = particle.x;
+      this.count++;
+      this.particles[this.count] = particle;
+    }
+
+    if (intensityRatio > 2.0 && Math.random() < (intensityRatio - 2.0) * 2.0) {
+      const particle = this.createParticle();
+      particle.originalAlpha = particle.alpha;
+      particle.startX = particle.x;
+      this.count++;
+      this.particles[this.count] = particle;
+    }
+
+    if (this.count > currentMaxParticles + 200) {
+      const excessCount = Math.min(15, this.count - currentMaxParticles);
+      for (let i = 0; i < excessCount; i++) {
+        delete this.particles[this.count - i];
+      }
+      this.count -= excessCount;
+    }
+  }
+
+  animate() {
+    this.render();
+    this.animationId = requestAnimationFrame(() => this.animate());
+  }
+
+  setScanningActive(active) {
+    this.scanningActive = active;
+  }
+
+  getStats() {
+    return {
+      intensity: this.intensity,
+      maxParticles: this.maxParticles,
+      currentParticles: this.count,
+      lightBarWidth: this.lightBarWidth,
+      fadeZone: this.fadeZone,
+      scanningActive: this.scanningActive,
+      canvasWidth: this.w,
+      canvasHeight: this.h
+    };
+  }
+
+  destroy() {
+    window.removeEventListener("resize", this.resizeHandler);
+
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+    }
+
+    this.particles = [];
+    this.count = 0;
+  }
+}
+
+let particleScanner;
+
+document.addEventListener("DOMContentLoaded", () => {
+  cardStream = new CardStreamController();
+  particleSystem = new ParticleSystem();
+  particleScanner = new ParticleScanner();
+
+  window.setScannerScanning = (active) => {
+    if (particleScanner) {
+      particleScanner.setScanningActive(active);
+    }
+  };
+
+  window.getScannerStats = () => {
+    if (particleScanner) {
+      return particleScanner.getStats();
+    }
+    return null;
+  };
+
+  // تنظيف عند إغلاق الصفحة
+  window.addEventListener("beforeunload", () => {
+    if (cardStream) cardStream.destroy();
+    if (particleSystem) particleSystem.destroy();
+    if (particleScanner) particleScanner.destroy();
+  });
+});

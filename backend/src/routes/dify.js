@@ -7,7 +7,7 @@
 
 const express = require('express');
 const router = express.Router();
-const difyService = require('../services/difyService');
+const difyService = require('../services/dify');
 const authenticate = require('../middleware/auth');
 const requireAdmin = require('../middleware/adminAuth');
 const { ApiError } = require('../middleware/errorHandler');

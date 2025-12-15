@@ -123,9 +123,6 @@ export default function LandingPage() {
           isRTL={isRTL}
         />
 
-        {/* Card Beam Animation */}
-        <CardBeamAnimation />
-
         {/* Problem Solution Section */}
         <ProblemSolutionSection isRTL={isRTL} />
 
