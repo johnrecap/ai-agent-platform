@@ -20,6 +20,7 @@ import LogoShowcase from '@/components/LogoShowcase';
 // Lazy load heavy components
 const FloatingChatbot = dynamic(() => import('@/components/FloatingChatbot'), { ssr: false });
 const CustomCursor = dynamic(() => import('@/components/CustomCursor'), { ssr: false });
+const CardBeamAnimation = dynamic(() => import('@/components/CardBeamAnimation'), { ssr: false });
 
 /**
  * Homepage - Landing Page
@@ -118,6 +119,9 @@ export default function LandingPage() {
           onRoleChange={setActiveRole}
           isRTL={isRTL}
         />
+
+        {/* Card Beam Animation */}
+        <CardBeamAnimation />
 
         {/* Problem Solution Section */}
         <ProblemSolutionSection isRTL={isRTL} />

@@ -1,0 +1,99 @@
+'use client';
+
+/**
+ * Card Beam Animation Component
+ * Main container for the hero section animation
+ */
+
+import { useState, useEffect, Suspense, lazy } from 'react';
+import api from '@/lib/api';
+import styles from './styles.module.css';
+import ScannerBeam from './ScannerBeam';
+import CardStream from './CardStream';
+
+// Lazy load Three.js particle system
+const ParticleSystem = lazy(() => import('./ParticleSystem'));
+
+export default function CardBeamAnimation() {
+    const [cards, setCards] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isScanning, setIsScanning] = useState(false);
+    const [speed, setSpeed] = useState(120);
+
+    useEffect(() => {
+        fetchCards();
+    }, []);
+
+    const fetchCards = async () => {
+        try {
+            const res = await api.get('/api/hero-cards');
+            const fetchedCards = res.data.data || [];
+
+            // Ensure we have at least 5 cards for smooth carousel
+            if (fetchedCards.length > 0) {
+                const duplicatedCards = [...fetchedCards];
+                while (duplicatedCards.length < 30) {
+                    duplicatedCards.push(...fetchedCards);
+                }
+                setCards(duplicatedCards.slice(0, 30));
+            } else {
+                // Fallback placeholders
+                setCards(getPlaceholderCards());
+            }
+        } catch (error) {
+            console.error('Failed to fetch hero cards:', error);
+            setCards(getPlaceholderCards());
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getPlaceholderCards = () => {
+        return Array.from({ length: 10 }, (_, i) => ({
+            id: `placeholder-${i}`,
+            title: `Card ${i + 1}`,
+            image_url: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Cdefs%3E%3ClinearGradient id='grad${i}' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='250' fill='url(%23grad${i})' /%3E%3C/svg%3E`
+        }));
+    };
+
+    if (loading) {
+        return (
+            <div className={styles.cardBeamContainer}>
+                <div className="flex items-center justify-center h-full">
+                    <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <section className={styles.cardBeamContainer}>
+            {/* Speed Indicator */}
+            <div className={styles.speedIndicator}>
+                Speed: <span>{Math.round(speed)}</span> px/s
+            </div>
+
+            {/* Canvas container */}
+            <div className={styles.canvasContainer}>
+                {/* Particle System (Three.js) */}
+                <Suspense fallback={null}>
+                    <ParticleSystem />
+                </Suspense>
+
+                {/* Scanner Beam */}
+                <ScannerBeam isScanning={isScanning} />
+
+                {/* Card Stream */}
+                <CardStream
+                    cards={cards}
+                    onScanningChange={setIsScanning}
+                />
+            </div>
+
+            {/* Credit */}
+            <div className="fixed bottom-5 left-1/2 -translate-x-1/2 text-xs text-purple-400 z-[1000]">
+                Inspired by <a href="https://evervault.com/" target="_blank" rel="noopener" className="hover:text-purple-300">@evervault.com</a>
+            </div>
+        </section>
+    );
+}

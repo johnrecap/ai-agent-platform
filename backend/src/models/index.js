@@ -5,10 +5,11 @@
 
 const { sequelize } = require('../config/database');
 const config = require('../config/config');
-const User = require('./User');
-const Agent = require('./Agent');
-const Conversation = require('./Conversation');
-const UserAgent = require('./UserAgent');
+const User = require('./User')(sequelize);
+const Agent = require('./Agent')(sequelize);
+const Conversation = require('./Conversation')(sequelize);
+const UserAgent = require('./UserAgent')(sequelize);
+const HeroCard = require('./HeroCard')(sequelize);
 
 // ==========================================
 // Define Model Associations
@@ -92,5 +93,6 @@ module.exports = {
     Agent,
     Conversation,
     UserAgent,
+    HeroCard,
     seedDefaultAdmin
 };
