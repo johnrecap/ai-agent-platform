@@ -28,7 +28,6 @@ const difyRoutes = require('./routes/dify');
 const chatRoutes = require('./routes/chat');
 const userAgentRoutes = require('./routes/userAgents');
 const avatarRoutes = require('./routes/avatarRoutes');
-const heroCardsRoutes = require('./routes/heroCards');
 
 // Import logger
 const logger = require('./utils/logger');
@@ -90,7 +89,6 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/agents', agentRoutes);
@@ -99,7 +97,6 @@ app.use('/api/dify', difyRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/user-agents', userAgentRoutes);
 app.use('/api', avatarRoutes); // Avatar upload routes
-app.use('/api/hero-cards', heroCardsRoutes); // Hero cards routes
 
 // ==========================================
 // Error Handling

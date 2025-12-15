@@ -11,7 +11,6 @@ const User = require('./User');
 const Agent = require('./Agent');
 const Conversation = require('./Conversation');
 const UserAgent = require('./UserAgent');
-const HeroCard = require('./HeroCard');
 
 // ==========================================
 // Define Model Associations
@@ -95,6 +94,5 @@ module.exports = {
     Agent,
     Conversation,
     UserAgent,
-    HeroCard,
     seedDefaultAdmin
 };
