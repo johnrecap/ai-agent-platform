@@ -11,6 +11,8 @@ import { useLanguage } from '@/lib/language';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { GlassCard, GradientButton, Skeleton, EmptyState, IconButton } from '@/components/ui';
+import UserCard from '@/components/Users/UserCard';
+import AgentAssignmentSection from '@/components/Users/AgentAssignmentSection';
 
 export default function UsersPage() {
     const { t, isRTL, language } = useLanguage();
