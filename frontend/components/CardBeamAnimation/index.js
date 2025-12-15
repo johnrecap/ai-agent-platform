@@ -68,11 +68,6 @@ export default function CardBeamAnimation() {
 
     return (
         <section className={styles.cardBeamContainer}>
-            {/* Speed Indicator */}
-            <div className={styles.speedIndicator}>
-                Speed: <span>{Math.round(speed)}</span> px/s
-            </div>
-
             {/* Canvas container */}
             <div className={styles.canvasContainer}>
                 {/* Particle System (Three.js) */}

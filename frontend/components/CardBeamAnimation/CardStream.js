@@ -70,14 +70,19 @@ export default function CardStream({ cards, onScanningChange }) {
             const deltaTime = (currentTime - lastTime.current) / 1000;
             lastTime.current = currentTime;
 
-            if (isAnimating && !isDragging) {
+            if (isAnimating && !isDragging && cardLineRef.current) {
                 setPosition((prev) => {
-                    let newPos = prev + velocity * direction * deltaTime;
+                    const newPos = prev + velocity * direction * deltaTime;
                     const containerWidth = window.innerWidth;
-                    const lineWidth = cardLineRef.current?.scrollWidth || 0;
+                    const lineWidth = cardLineRef.current.scrollWidth / 2; // Divide by 2 because we duplicate cards
 
-                    if (newPos < -lineWidth) newPos = containerWidth;
-                    if (newPos > containerWidth) newPos = -lineWidth;
+                    // Seamless loop: reset when half the cards pass
+                    if (newPos < -lineWidth) {
+                        return newPos + lineWidth;
+                    }
+                    if (newPos > containerWidth) {
+                        return newPos - lineWidth;
+                    }
 
                     return newPos;
                 });
@@ -127,8 +132,9 @@ export default function CardStream({ cards, onScanningChange }) {
                 onMouseUp={endDrag}
                 onMouseLeave={endDrag}
             >
-                {cards.map((card, index) => (
-                    <div key={card.id} className={styles.cardWrapper}>
+                {/* Render cards twice for seamless loop */}
+                {[...cards, ...cards].map((card, index) => (
+                    <div key={`${card.id}-${index}`} className={styles.cardWrapper}>
                         <div className={`${styles.card} ${styles.cardNormal}`}>
                             <Image
                                 src={card.image_url}

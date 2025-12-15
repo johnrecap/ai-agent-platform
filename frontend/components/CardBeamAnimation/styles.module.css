@@ -2,7 +2,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
-    background: #000000;
+    background: linear-gradient(180deg, var(--role-background) 0%, #0a0a1e 50%, var(--role-background) 100%);
     overflow: hidden;
 }
 
