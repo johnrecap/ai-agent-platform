@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import useParallax from '@/hooks/useParallax';
 import PersonalizationSwitcher from '@/components/PersonalizationSwitcher';
@@ -5,8 +6,16 @@ import MagneticButton from '@/components/MagneticButton';
 import TypingText from '@/components/TypingText';
 import TrustStrip from '@/components/TrustStrip';
 import ScrollIndicator from '@/components/ScrollIndicator';
-import ParticleSystem from '@/components/ParticleSystem';
-import ParallaxOrbs from '@/components/ParallaxOrbs';
+
+// Lazy load heavy animation components for better initial load
+const ParticleSystem = dynamic(() => import('@/components/ParticleSystem'), {
+    ssr: false,
+    loading: () => null
+});
+const ParallaxOrbs = dynamic(() => import('@/components/ParallaxOrbs'), {
+    ssr: false,
+    loading: () => null
+});
 
 /**
  * Hero Section Component

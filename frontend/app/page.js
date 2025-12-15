@@ -14,13 +14,16 @@ import PricingSection from '@/components/Home/PricingSection';
 import FinalCTASection from '@/components/Home/FinalCTASection';
 import HomeFooter from '@/components/Home/HomeFooter';
 import ScrollProgressBar from '@/components/ScrollProgressBar';
-import BentoGrid from '@/components/BentoGrid';
-import LogoShowcase from '@/components/LogoShowcase';
-import CardBeamAnimation from '@/components/CardBeamAnimation';
 
-// Lazy load heavy components
+// Lazy load heavy components for better performance
 const FloatingChatbot = dynamic(() => import('@/components/FloatingChatbot'), { ssr: false });
 const CustomCursor = dynamic(() => import('@/components/CustomCursor'), { ssr: false });
+const BentoGrid = dynamic(() => import('@/components/BentoGrid'), {
+  ssr: true,
+  loading: () => <div className="min-h-[400px] animate-pulse bg-white/5 rounded-3xl" />
+});
+const LogoShowcase = dynamic(() => import('@/components/LogoShowcase'), { ssr: true });
+const CardBeamAnimation = dynamic(() => import('@/components/CardBeamAnimation'), { ssr: false });
 
 /**
  * Homepage - Landing Page
