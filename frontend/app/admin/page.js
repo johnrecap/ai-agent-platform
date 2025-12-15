@@ -3,6 +3,8 @@
 /**
  * Admin Dashboard - Premium 2026 Design with i18n
  * AI Agent Platform
+ * @version 2.0.0-new-dashboard (December 2024)
+ * This is the NEW dashboard - not the old one!
  */
 
 import { useEffect, useState } from 'react';
