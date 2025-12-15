@@ -39,7 +39,6 @@ const automationRoutes = require('./routes/automation');
 const settingsRoutes = require('./routes/settings');
 const securityRoutes = require('./routes/security');
 const docsRoutes = require('./routes/docs');
-const difyRoutes = require('./routes/dify');
 
 // Import logger
 const logger = require('./utils/logger');
