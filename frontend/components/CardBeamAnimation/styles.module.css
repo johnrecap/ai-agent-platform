@@ -23,6 +23,7 @@
     color: white;
     font-weight: bold;
     cursor: pointer;
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
     font-size: 14px;
@@ -47,6 +48,7 @@
     background: rgba(0, 0, 0, 0.3);
     padding: 8px 16px;
     border-radius: 20px;
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     z-index: 100;
 }
@@ -75,6 +77,7 @@
     gap: 60px;
     white-space: nowrap;
     cursor: grab;
+    -webkit-user-select: none;
     user-select: none;
     will-change: transform;
 }
@@ -160,20 +163,36 @@
     animation: glitch 0.1s infinite linear alternate-reverse;
     margin: 0;
     padding: 0;
-    mask-image: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 1) 0%,
-        rgba(0, 0, 0, 0.8) 30%,
-        rgba(0, 0, 0, 0.6) 50%,
-        rgba(0, 0, 0, 0.4) 80%,
-        rgba(0, 0, 0, 0.2) 100%
-    );
+    -webkit-mask-image: linear-gradient(to right,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 0.8) 30%,
+            rgba(0, 0, 0, 0.6) 50%,
+            rgba(0, 0, 0, 0.4) 80%,
+            rgba(0, 0, 0, 0.2) 100%);
+    mask-image: linear-gradient(to right,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 0.8) 30%,
+            rgba(0, 0, 0, 0.6) 50%,
+            rgba(0, 0, 0, 0.4) 80%,
+            rgba(0, 0, 0, 0.2) 100%);
 }
 
 @keyframes glitch {
-    0%, 100% { opacity: 1; }
-    15%, 16% { opacity: 0.9; }
-    49%, 50% { opacity: 0.8; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    15%,
+    16% {
+        opacity: 0.9;
+    }
+
+    49%,
+    50% {
+        opacity: 0.8;
+    }
 }
 
 .particleCanvas {
@@ -215,9 +234,11 @@
         transform: translateX(-100%);
         opacity: 0;
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         transform: translateX(100%);
         opacity: 0;
@@ -225,11 +246,15 @@
 }
 
 @media (max-width: 768px) {
-    .cardWrapper, .card, .cardNormal, .cardAscii {
+
+    .cardWrapper,
+    .card,
+    .cardNormal,
+    .cardAscii {
         width: 300px;
         height: 188px;
     }
-    
+
     .asciiContent {
         font-size: 9px;
         line-height: 11px;
