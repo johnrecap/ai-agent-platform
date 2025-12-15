@@ -11,6 +11,15 @@ const User = require('./User');
 const Agent = require('./Agent');
 const Conversation = require('./Conversation');
 const UserAgent = require('./UserAgent');
+const Product = require('./Product');
+const Customer = require('./Customer');
+const Invoice = require('./Invoice');
+const Payment = require('./Payment');
+const Integration = require('./Integration');
+const AutomationRule = require('./AutomationRule');
+const Setting = require('./Setting');
+const ActivityLog = require('./ActivityLog');
+const Documentation = require('./Documentation');
 
 // ==========================================
 // Define Model Associations
@@ -63,6 +72,28 @@ Conversation.belongsTo(User, {
     as: 'user'
 });
 
+// Customer has many Invoices
+Customer.hasMany(Invoice, {
+    foreignKey: 'customer_id',
+    as: 'invoices',
+    onDelete: 'CASCADE'
+});
+Invoice.belongsTo(Customer, {
+    foreignKey: 'customer_id',
+    as: 'customer'
+});
+
+// Invoice has many Payments
+Invoice.hasMany(Payment, {
+    foreignKey: 'invoice_id',
+    as: 'payments',
+    onDelete: 'CASCADE'
+});
+Payment.belongsTo(Invoice, {
+    foreignKey: 'invoice_id',
+    as: 'invoice'
+});
+
 // ==========================================
 // Seed Default Admin User
 // ==========================================
@@ -94,5 +125,14 @@ module.exports = {
     Agent,
     Conversation,
     UserAgent,
+    Product,
+    Customer,
+    Invoice,
+    Payment,
+    Integration,
+    AutomationRule,
+    Setting,
+    ActivityLog,
+    Documentation,
     seedDefaultAdmin
 };

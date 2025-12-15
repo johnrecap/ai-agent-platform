@@ -28,6 +28,18 @@ const difyRoutes = require('./routes/dify');
 const chatRoutes = require('./routes/chat');
 const userAgentRoutes = require('./routes/userAgents');
 const avatarRoutes = require('./routes/avatarRoutes');
+const analyticsRoutes = require('./routes/analytics');
+const advancedAnalyticsRoutes = require('./routes/advancedAnalytics');
+const productsRoutes = require('./routes/products');
+const customersRoutes = require('./routes/customers');
+const invoicesRoutes = require('./routes/invoices');
+const paymentsRoutes = require('./routes/payments');
+const integrationsRoutes = require('./routes/integrations');
+const automationRoutes = require('./routes/automation');
+const settingsRoutes = require('./routes/settings');
+const securityRoutes = require('./routes/security');
+const docsRoutes = require('./routes/docs');
+const difyRoutes = require('./routes/dify');
 
 // Import logger
 const logger = require('./utils/logger');
@@ -97,6 +109,18 @@ app.use('/api/dify', difyRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/user-agents', userAgentRoutes);
 app.use('/api', avatarRoutes); // Avatar upload routes
+app.use('/api/admin/analytics', analyticsRoutes); // Analytics routes
+app.use('/api/analytics/advanced', advancedAnalyticsRoutes); // Advanced Analytics routes
+app.use('/api/products', productsRoutes); // Products routes
+app.use('/api/customers', customersRoutes); // Customers routes
+app.use('/api/invoices', invoicesRoutes); // Invoices routes
+app.use('/api/payments', paymentsRoutes); // Payments routes
+app.use('/api/integrations', integrationsRoutes); // Integrations routes
+app.use('/api/automation', automationRoutes); // Automation routes
+app.use('/api/settings', settingsRoutes); // Settings routes
+app.use('/api/security', securityRoutes); // Security routes
+app.use('/api/docs', docsRoutes); // Documentation routes
+app.use('/api/dify', difyRoutes); // Dify Integration routes
 
 // ==========================================
 // Error Handling

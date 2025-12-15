@@ -48,7 +48,7 @@ const Agent = sequelize.define('Agent', {
         }
     },
     page_title: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING,
         allowNull: true
     },
     description: {
@@ -63,7 +63,6 @@ const Agent = sequelize.define('Agent', {
         }
     },
     dify_api_key: {
-        type: DataTypes.STRING(255),
         allowNull: true,
         comment: 'Dify Backend Service API key for this agent'
     },
