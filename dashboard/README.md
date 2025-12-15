@@ -1,20 +1,49 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# AI Agent Dashboard
 
-# Run and deploy your AI Studio app
+New dashboard for the AI Agent Platform.
 
-This contains everything you need to run your app locally.
+## Deployment to Vercel
 
-View your app in AI Studio: https://ai.studio/apps/drive/1LPlBTo83hHZUkUlpSUptLr8gaJi4QFQA
+### 1. Push to GitHub
 
-## Run Locally
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/YOUR_USERNAME/ai-agent-dashboard.git
+git push -u origin main
+```
 
-**Prerequisites:**  Node.js
+### 2. Deploy on Vercel
 
+1. Go to [vercel.com](https://vercel.com)
+2. Click "Add New Project"
+3. Import your GitHub repository
+4. Set Environment Variables:
+   - `VITE_API_URL` = `https://your-backend.railway.app` (your Railway backend URL)
+5. Click "Deploy"
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 3. Configure Subdomain
+
+After deployment, you can set a custom domain like `dashboard.yourdomain.com`
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Backend API URL (Railway) |
+
+## Features
+
+- 📊 Dashboard with charts
+- 👥 Customer management
+- 📈 Analytics
+- ⚙️ Settings (Admin only)
+- 🔒 Security (Admin only)

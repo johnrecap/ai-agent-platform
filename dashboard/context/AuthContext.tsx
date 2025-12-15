@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole } from '../types';
-import { parseJwt } from '../lib/utils';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import api from '../lib/api';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  handleGoogleLogin: (credentialResponse: any) => void;
+  login: (email: string, password: string) => Promise<void>;
   loginAsDemoUser: (role: UserRole) => void;
   logout: () => void;
 }
@@ -18,120 +17,78 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Check for active session on load
+    // Check for existing session on load
     const initializeAuth = async () => {
-        // 1. Check Local Mock Storage first (for demo purposes)
-        const storedUser = localStorage.getItem('nexus_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            setIsLoading(false);
-            return;
-        }
+      const storedUser = localStorage.getItem('nexus_user');
+      const token = localStorage.getItem('token');
 
-        // 2. Check Supabase Session
-        if (isSupabaseConfigured()) {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                // Map Supabase user to App User
-                const appUser: User = {
-                    id: session.user.id,
-                    email: session.user.email || '',
-                    name: session.user.user_metadata.full_name || 'User',
-                    avatar: session.user.user_metadata.avatar_url,
-                    role: (session.user.user_metadata.role as UserRole) || 'user'
-                };
-                setUser(appUser);
-            }
+      if (storedUser && token) {
+        try {
+          // Verify token is still valid
+          const response = await api.getCurrentUser();
+          const userData = response.user || JSON.parse(storedUser);
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            role: userData.role === 'admin' ? 'admin' : 'user',
+            avatar: userData.avatar
+          });
+        } catch (error) {
+          // Token invalid, clear storage
+          api.logout();
         }
-        setIsLoading(false);
+      }
+      setIsLoading(false);
     };
 
     initializeAuth();
-
-    // Listen for auth changes if using Supabase
-    if (isSupabaseConfigured()) {
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            if (session?.user) {
-                setUser({
-                    id: session.user.id,
-                    email: session.user.email || '',
-                    name: session.user.user_metadata.full_name || 'User',
-                    avatar: session.user.user_metadata.avatar_url,
-                    role: (session.user.user_metadata.role as UserRole) || 'user'
-                });
-            } else {
-                // Only clear if we aren't using the demo user
-                if (!localStorage.getItem('nexus_user')) {
-                    setUser(null);
-                }
-            }
-        });
-        return () => subscription.unsubscribe();
-    }
   }, []);
 
-  const handleGoogleLogin = async (credentialResponse: any) => {
+  const login = async (email: string, password: string) => {
     setIsLoading(true);
-    
-    // Legacy Mock Google Login (Client Side Only)
-    if (!isSupabaseConfigured()) {
-        const decoded = parseJwt(credentialResponse.credential);
-        if (decoded) {
-            const role: UserRole = decoded.email.includes('admin') ? 'admin' : 'user';
-            const newUser: User = {
-                id: decoded.sub,
-                name: decoded.name,
-                email: decoded.email,
-                role: role,
-                avatar: decoded.picture
-            };
-            setUser(newUser);
-            localStorage.setItem('nexus_user', JSON.stringify(newUser));
-        }
-        setIsLoading(false);
-        return;
-    }
+    try {
+      const data = await api.login(email, password);
+      const userData = data.user;
 
-    // Real Supabase Google Login
-    const { error } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
-        token: credentialResponse.credential,
-    });
+      const appUser: User = {
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
+        role: userData.role === 'admin' ? 'admin' : 'user',
+        avatar: userData.avatar
+      };
 
-    if (error) {
-        console.error("Supabase Login Error:", error);
-        alert("Authentication failed");
+      setUser(appUser);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const loginAsDemoUser = (role: UserRole) => {
     setIsLoading(true);
     setTimeout(() => {
-        const demoUser: User = {
-            id: 'demo-user-' + Math.random().toString(36).substr(2, 9),
-            name: role === 'admin' ? 'Demo Admin' : 'Demo User',
-            email: role === 'admin' ? 'admin@demo.com' : 'user@demo.com',
-            role: role,
-            avatar: `https://picsum.photos/seed/${role}/200`
-        };
-        setUser(demoUser);
-        localStorage.setItem('nexus_user', JSON.stringify(demoUser));
-        setIsLoading(false);
+      const demoUser: User = {
+        id: 'demo-user-' + Math.random().toString(36).substr(2, 9),
+        name: role === 'admin' ? 'Demo Admin' : 'Demo User',
+        email: role === 'admin' ? 'admin@demo.com' : 'user@demo.com',
+        role: role,
+        avatar: `https://picsum.photos/seed/${role}/200`
+      };
+      setUser(demoUser);
+      localStorage.setItem('nexus_user', JSON.stringify(demoUser));
+      setIsLoading(false);
     }, 800);
   };
 
-  const logout = async () => {
-    if (isSupabaseConfigured()) {
-        await supabase.auth.signOut();
-    }
+  const logout = () => {
+    api.logout();
     setUser(null);
-    localStorage.removeItem('nexus_user');
-    window.location.href = '/'; 
+    window.location.href = '#/login';
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, handleGoogleLogin, loginAsDemoUser, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, loginAsDemoUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -21,11 +21,18 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    // Dashboard URL for admins (can be set via NEXT_PUBLIC_DASHBOARD_URL env var)
+    const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/admin';
+
     useEffect(() => {
         if (isLoggedIn()) {
-            router.push(isAdmin() ? '/admin' : '/profile');
+            if (isAdmin() && dashboardUrl.startsWith('http')) {
+                window.location.href = dashboardUrl;
+            } else {
+                router.push(isAdmin() ? dashboardUrl : '/profile');
+            }
         }
-    }, [router]);
+    }, [router, dashboardUrl]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,7 +45,11 @@ export default function LoginPage() {
         try {
             await login(email, password);
             toast.success(t('login.loginSuccess'));
-            router.push(isAdmin() ? '/admin' : '/profile');
+            if (isAdmin() && dashboardUrl.startsWith('http')) {
+                window.location.href = dashboardUrl;
+            } else {
+                router.push(isAdmin() ? dashboardUrl : '/profile');
+            }
         } catch (error) {
             toast.error(error.message || t('login.loginFailed'));
         } finally {
