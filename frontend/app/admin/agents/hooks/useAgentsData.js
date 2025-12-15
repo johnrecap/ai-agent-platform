@@ -18,6 +18,9 @@ export function useAgentsData(txt) {
         agent_name: '',
         page_title: '',
         dify_api_key: '',
+        dify_app_id: '',
+        provider_type: 'custom',
+        provider_config: {},
         iframe_code: ''
     });
     const [saving, setSaving] = useState(false);
@@ -47,6 +50,9 @@ export function useAgentsData(txt) {
                 agent_name: agent.agent_name,
                 page_title: agent.page_title || '',
                 dify_api_key: agent.dify_api_key || '',
+                dify_app_id: agent.dify_app_id || '',
+                provider_type: agent.provider_type || 'custom',
+                provider_config: agent.provider_config || {},
                 iframe_code: agent.iframe_code || ''
             });
         } else {
@@ -55,6 +61,9 @@ export function useAgentsData(txt) {
                 agent_name: '',
                 page_title: '',
                 dify_api_key: '',
+                dify_app_id: '',
+                provider_type: 'custom',
+                provider_config: {},
                 iframe_code: ''
             });
         }
