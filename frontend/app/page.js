@@ -16,11 +16,11 @@ import HomeFooter from '@/components/Home/HomeFooter';
 import ScrollProgressBar from '@/components/ScrollProgressBar';
 import BentoGrid from '@/components/BentoGrid';
 import LogoShowcase from '@/components/LogoShowcase';
+import CardBeamAnimation from '@/components/CardBeamAnimation';
 
 // Lazy load heavy components
 const FloatingChatbot = dynamic(() => import('@/components/FloatingChatbot'), { ssr: false });
 const CustomCursor = dynamic(() => import('@/components/CustomCursor'), { ssr: false });
-const CardBeamAnimation = dynamic(() => import('@/components/CardBeamAnimation'), { ssr: false });
 
 /**
  * Homepage - Landing Page

@@ -15,10 +15,8 @@ import CardStream from './CardStream';
 const ParticleSystem = lazy(() => import('./ParticleSystem'));
 
 export default function CardBeamAnimation() {
-    const [cards, setCards] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [cards, setCards] = useState(getPlaceholderCards());
     const [isScanning, setIsScanning] = useState(false);
-    const [speed, setSpeed] = useState(120);
 
     useEffect(() => {
         fetchCards();
@@ -36,15 +34,10 @@ export default function CardBeamAnimation() {
                     duplicatedCards.push(...fetchedCards);
                 }
                 setCards(duplicatedCards.slice(0, 30));
-            } else {
-                // Fallback placeholders
-                setCards(getPlaceholderCards());
             }
         } catch (error) {
             console.error('Failed to fetch hero cards:', error);
-            setCards(getPlaceholderCards());
-        } finally {
-            setLoading(false);
+            // Keep placeholders on error
         }
     };
 
@@ -55,16 +48,6 @@ export default function CardBeamAnimation() {
             image_url: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='250'%3E%3Cdefs%3E%3ClinearGradient id='grad${i}' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='250' fill='url(%23grad${i})' /%3E%3C/svg%3E`
         }));
     };
-
-    if (loading) {
-        return (
-            <div className={styles.cardBeamContainer}>
-                <div className="flex items-center justify-center h-full">
-                    <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-                </div>
-            </div>
-        );
-    }
 
     return (
         <section className={styles.cardBeamContainer}>
