@@ -54,7 +54,7 @@ export default function AdminConversationsPage() {
     useEffect(() => {
         loadAgents();
         loadConversations();
-        checkDifyStatus();
+        loadDifyStatus();
     }, [page, filter, selectedAgent]);
 
     const loadAgents = async () => {
@@ -84,25 +84,26 @@ export default function AdminConversationsPage() {
         }
     };
 
-    const checkDifyStatus = async () => {
-        try {
-            const response = await api.get('/api/dify/status');
-            setSyncStatus(response.data.data);
-        } catch (error) {
-            setSyncStatus({ configured: false, connected: false });
+    const loadDifyStatus = async () => {
+        if (selectedAgent) {
+            const status = await getStatus(selectedAgent);
+            setDifyStatus(status);
         }
     };
 
-    const handleSync = async () => {
-        setSyncing(true);
-        try {
-            const response = await api.post('/api/dify/sync', { agentId: null });
-            toast.success(`${txt.syncSuccess} (${response.data.data?.synced || 0} ${txt.messages})`);
+    const handleDifySync = async () => {
+        if (!selectedAgent) {
+            toast.error('Please select an agent first');
+            return;
+        }
+
+        const result = await syncConversations(selectedAgent);
+        if (result.success) {
+            toast.success(txt.syncSuccess);
             loadConversations();
-        } catch (error) {
-            toast.error(error.response?.data?.message || txt.syncFailed);
-        } finally {
-            setSyncing(false);
+            loadDifyStatus();
+        } else {
+            toast.error(result.error || txt.syncFailed);
         }
     };
 
