@@ -89,11 +89,6 @@ export default function CardBeamAnimation() {
                     onScanningChange={setIsScanning}
                 />
             </div>
-
-            {/* Credit */}
-            <div className="fixed bottom-5 left-1/2 -translate-x-1/2 text-xs text-purple-400 z-[1000]">
-                Inspired by <a href="https://evervault.com/" target="_blank" rel="noopener" className="hover:text-purple-300">@evervault.com</a>
-            </div>
         </section>
     );
 }
