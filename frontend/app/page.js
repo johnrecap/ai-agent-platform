@@ -23,7 +23,6 @@ const BentoGrid = dynamic(() => import('@/components/BentoGrid'), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-white/5 rounded-3xl" />
 });
 const LogoShowcase = dynamic(() => import('@/components/LogoShowcase'), { ssr: true });
-const CardBeamAnimation = dynamic(() => import('@/components/CardBeamAnimation'), { ssr: false });
 
 /**
  * Homepage - Landing Page
