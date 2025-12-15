@@ -7,16 +7,6 @@ import TypingText from '@/components/TypingText';
 import TrustStrip from '@/components/TrustStrip';
 import ScrollIndicator from '@/components/ScrollIndicator';
 
-// Lazy load heavy animation components for better initial load
-const ParticleSystem = dynamic(() => import('@/components/ParticleSystem'), {
-    ssr: false,
-    loading: () => null
-});
-const ParallaxOrbs = dynamic(() => import('@/components/ParallaxOrbs'), {
-    ssr: false,
-    loading: () => null
-});
-
 /**
  * Hero Section Component
  * Main landing section with personalization, headline, and CTA
@@ -28,9 +18,6 @@ export default function HeroSection({ content, activeRole, onRoleChange, isRTL }
 
     return (
         <section className="relative min-h-screen flex items-center justify-center px-4 py-20 brand-grid overflow-hidden">
-            {/* Background Effects */}
-            <ParticleSystem />
-            <ParallaxOrbs />
 
             {/* Content */}
             <div className="relative z-10 max-w-5xl mx-auto text-center">
