@@ -63,8 +63,26 @@ const Agent = sequelize.define('Agent', {
         }
     },
     dify_api_key: {
+        type: DataTypes.STRING(500),
         allowNull: true,
         comment: 'Dify Backend Service API key for this agent'
+    },
+    dify_app_id: {
+        type: DataTypes.STRING(200),
+        allowNull: true,
+        comment: 'Dify Application ID'
+    },
+    provider_type: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+        defaultValue: 'custom',
+        comment: 'AI Provider Type (dify, openai, custom)'
+    },
+    provider_config: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+        defaultValue: {},
+        comment: 'Provider-specific configuration'
     },
     avatar_url: {
         type: DataTypes.STRING(500),
@@ -79,7 +97,7 @@ const Agent = sequelize.define('Agent', {
     avatar_updated_at: {
         type: DataTypes.DATE,
         allowNull: true,
-        comment: 'Timestamp of last avatar update'
+        comment: 'Last avatar update timestamp'
     },
     // Agent Maker Configuration Fields
     role: {

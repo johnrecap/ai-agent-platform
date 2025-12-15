@@ -119,7 +119,6 @@ app.use('/api/automation', automationRoutes); // Automation routes
 app.use('/api/settings', settingsRoutes); // Settings routes
 app.use('/api/security', securityRoutes); // Security routes
 app.use('/api/docs', docsRoutes); // Documentation routes
-app.use('/api/dify', difyRoutes); // Dify Integration routes
 
 // ==========================================
 // Error Handling
