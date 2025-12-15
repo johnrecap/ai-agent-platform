@@ -13,19 +13,23 @@ import { GlassCard, GradientButton, Skeleton, StatusBadge, EmptyState } from '@/
 import ConversationViewer from '@/components/ConversationViewer';
 import Pagination from '@/components/Pagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import DifyStatusBanner from '@/components/Dify/DifyStatusBanner';
+import DifySyncButton from '@/components/Dify/DifySyncButton';
+import { useDify } from '@/hooks/useDify';
 
 export default function AdminConversationsPage() {
     const { language, isRTL } = useLanguage();
+    const { testing, syncing: difySyncing, testConnection, syncConversations, getStatus } = useDify();
+
     const [conversations, setConversations] = useState([]);
-    const [agents, setAgents] = useState([]); // List of user's agents
+    const [agents, setAgents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [syncing, setSyncing] = useState(false);
-    const [syncStatus, setSyncStatus] = useState(null);
+    const [difyStatus, setDifyStatus] = useState(null);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [selectedConversation, setSelectedConversation] = useState(null);
-    const [filter, setFilter] = useState('all'); // all, dify, excel
-    const [selectedAgent, setSelectedAgent] = useState(null); // Filter by agent ID
+    const [filter, setFilter] = useState('all');
+    const [selectedAgent, setSelectedAgent] = useState(null);
     const [deleteModal, setDeleteModal] = useState({ open: false, id: null });
 
     const txt = {
